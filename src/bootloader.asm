@@ -18,6 +18,8 @@ start:
     int 0x13
     jc $
 
+    call enable_a20
+
     cli
 
     xor ax, ax
@@ -56,6 +58,12 @@ prot_start:
     jmp 0x1000
 
 [BITS 16]
+
+enable_a20:
+    in al, 0x92
+    or al, 0x02
+    out 0x92, al
+    ret
 
 times 510-($-$$) db 0
 dw 0xAA55
