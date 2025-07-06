@@ -1,8 +1,11 @@
+#define FSROOT 0x0000
 #include<stdint.h>
 #pragma once
 int chkfileID(int id);
-void writeto(uint32_t val, int addr);
-void print_hex(int p);
+void newfile(int id, const char name[], int dataloc, int size, int location);
+void addchild(int parent_location, int child_location);
+void initfsroot();
+
 struct fdata{
     int isdir;
     int id;

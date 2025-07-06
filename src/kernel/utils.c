@@ -1,5 +1,6 @@
 #include "utils.h"
 #include "io/io.h"
+#include "io/serial.h"
 void write_string( int colour, const char *string ){
     volatile char *video = (volatile char*)0xB8000;
     while( *string != 0 )
@@ -101,4 +102,17 @@ void concat(char *dest, const char *src) {
 
     // Null terminate the result
     *dest = '\0';
+}
+void print_hex(int p){
+    char buff[12];
+    int_to_hex(p, buff);
+    concat(buff, "\n");
+    serial_write(buff);
+}
+unsigned int strlen(const char str[]) {
+    unsigned int len = 0;
+    while (str[len] != '\0') {
+        len++;
+    }
+    return len;
 }
