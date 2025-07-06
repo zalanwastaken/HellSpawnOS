@@ -14,11 +14,36 @@ jobs:
     - name: Clone repo
       uses: actions/checkout@v3
 
-    - name: Enable i386
-      run: sudo dpkg --add-architecture i386
-
     - name: Install dependencies
-      run: sudo apt update && sudo apt install -y build-essential qemu-system nasm gcc-i386-elf
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential bison flex libgmp-dev libmpc-dev libmpfr-dev texinfo qemu-system-x86 nasm
+
+    - name: Build i386-elf cross-compiler
+      run: |
+        mkdir -p $HOME/src
+        cd $HOME/src
+        wget https://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.xz
+        tar -xf binutils-2.40.tar.xz
+        mkdir build-binutils
+        cd build-binutils
+        ../binutils-2.40/configure --target=i386-elf --prefix=$HOME/opt/cross --with-sysroot --disable-nls --disable-werror
+        make -j$(nproc)
+        make install
+
+        cd $HOME/src
+        wget https://ftp.gnu.org/gnu/gcc/gcc-13.1.0/gcc-13.1.0.tar.xz
+        tar -xf gcc-13.1.0.tar.xz
+        mkdir build-gcc
+        cd build-gcc
+        ../gcc-13.1.0/configure --target=i386-elf --prefix=$HOME/opt/cross --disable-nls --enable-languages=c --without-headers
+        make all-gcc -j$(nproc)
+        make all-target-libgcc -j$(nproc)
+        make install-gcc
+        make install-target-libgcc
+
+    - name: Add i386-elf-gcc to PATH
+      run: echo "$HOME/opt/cross/bin" >> $GITHUB_PATH
 
     - name: Build kernel
       run: make
