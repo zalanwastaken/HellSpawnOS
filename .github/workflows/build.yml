@@ -14,8 +14,10 @@ jobs:
     - name: Clone repo
       uses: actions/checkout@v3
 
-    - name: Install dependencies
+    - name: Enable i386
       run: sudo dpkg --add-architecture i386
+
+    - name: Install dependencies
       run: sudo apt update && sudo apt install -y build-essential qemu-system nasm gcc-i386-elf
 
     - name: Build kernel
