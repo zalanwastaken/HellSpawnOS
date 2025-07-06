@@ -1,0 +1,21 @@
+name: Build HellSpawnOS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone repo
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y build-essential qemu nasm i386-elf-gcc
+
+    - name: Build kernel
+      run: make
