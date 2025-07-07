@@ -13,6 +13,13 @@ void clear_low_memory() {
     }
 }
 
+void init(){
+    init_serial();
+    pic_remap();
+    idt_install();
+    irq_install();
+}
+
 __attribute__((section(".start")))
 void kernel_main(void){
     clear_low_memory();
@@ -20,13 +27,10 @@ void kernel_main(void){
     newfile(0xBEEF, "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
     addchild(FSROOT, 0x00FF);
 
-    init_serial();
+    init();
     serial_write("HELLO FROM HELLSPAWNOS\n");
-    serial_write("USE THIS TO DEBUG\n");
-    pic_remap();
-    idt_install();
-    irq_install();
-    asm volatile("sti");
+    serial_write("use this to debug\n");
+    asm volatile("sti"); // enable interrupts
 
     char buff[12];
     int_to_hex(0x1000, buff);
@@ -39,8 +43,9 @@ void kernel_main(void){
     if(chkfileID(0xBEEF) == 1){
         write_string_at(0x0F, "Kernel file found !", (screen_w*4)+1);
 
+        volatile struct fdata* root = (volatile struct fdata*)FSROOT;
         // verifiy file
-        volatile struct fdata* kernel = (volatile struct fdata*)0x00FF;
+        volatile struct fdata* kernel = (volatile struct fdata*)root->data[root->namelen+1];
         char name[kernel->namelen];
         for(int i = 0; i <= kernel->namelen; i++){
             name[i] = kernel->data[i];
@@ -52,6 +57,5 @@ void kernel_main(void){
 
     serial_write("reached end of test !\n");
 
-    while (1) {
-    }
+    while (1) {}
 }
