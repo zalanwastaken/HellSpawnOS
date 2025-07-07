@@ -16,7 +16,7 @@ start:
     mov dh, 0
     mov dl, 0x80
     int 0x13
-    jc $
+    jc disk_err
 
     call enable_a20
 
@@ -58,12 +58,49 @@ prot_start:
     jmp 0x1000
 
 [BITS 16]
+beep:
+    ; Set PIT channel 2 to square wave mode (mode 3)
+    mov al, 0b10110110         ; Channel 2, lobyte/hibyte, mode 3, binary
+    out 0x43, al
+
+    ; Set frequency (e.g., 1000 Hz = 1193182 / 1000 ≈ 1193)
+    mov ax, 1193
+    out 0x42, al               ; Send low byte
+    mov al, ah
+    out 0x42, al               ; Send high byte
+
+    ; Enable speaker (set bits 0 and 1 in port 0x61)
+    in al, 0x61
+    or al, 0b00000011
+    out 0x61, al
+
+    ; Delay loop (approx — you can tweak this)
+    mov cx, 0xFFFF
+    .delay_loop:
+        loop .delay_loop
+    mov cx, 0xFFFF
+    .delay_loop2:
+        loop .delay_loop2
+        ; Disable speaker (clear bits 0 and 1)
+        in al, 0x61
+        and al, 0b11111100
+        out 0x61, al
+    ret
 
 enable_a20:
     in al, 0x92
     or al, 0x02
     out 0x92, al
     ret
+
+disk_err:
+    call beep
+    mov ah, 0x0E
+    mov al, 'E'
+    int 0x10
+    mov al, '1'
+    int 0x10
+    jmp $
 
 times 510-($-$$) db 0
 dw 0xAA55
