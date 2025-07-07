@@ -4,7 +4,7 @@
 
 Welcome to **HELLSPAWN OS** — a hobby operating system where every file is a struct, every mistake overwrites RAM, and every `make run` is a gamble.
 
-No libc. No safety. Just raw C, assembly, and a burning desire to own every byte of memory between `0x0000` and `0xFFFFF`.
+No libc. No safety. Just raw C, assembly, and a burning desire to own every byte of memory between `0x0000` and `0x04FF`.
 
 ---
 
