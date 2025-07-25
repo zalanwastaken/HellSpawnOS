@@ -116,3 +116,13 @@ unsigned int strlen(const char str[]) {
     }
     return len;
 }
+
+static unsigned int seed = 1;
+unsigned int rand(){
+    seed = (1103515245 * seed + 12345) & 0x7fffffff;
+    return seed;
+}
+
+void srand(unsigned int s){
+    seed = s;
+}

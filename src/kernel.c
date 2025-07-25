@@ -24,7 +24,7 @@ __attribute__((section(".start")))
 void kernel_main(void){
     clear_low_memory();
     initfsroot();
-    newfile(0xBEEF, "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
+    newfile(rand(), "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
     addchild(FSROOT, 0x00FF);
 
     init();
@@ -39,6 +39,8 @@ void kernel_main(void){
     int_to_hex((*(int*)0x7e0f)*512, buff);
     write_string_at(0x0F, "Kernel size", (screen_w*2)+1);
     write_string_at(0x0F, buff, (screen_w*3)+1);
+
+    findfile("");
 
     if(chkfileID(0xBEEF) == 1){
         write_string_at(0x0F, "Kernel file found !", (screen_w*4)+1);

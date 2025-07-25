@@ -5,6 +5,7 @@ int chkfileID(int id);
 void newfile(int id, const char name[], int dataloc, int size, int location);
 void addchild(int parent_location, int child_location);
 void initfsroot();
+int findfile(char path[]);
 
 struct fdata{
     int isdir;

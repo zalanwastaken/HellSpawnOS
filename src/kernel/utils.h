@@ -12,3 +12,4 @@ void int_to_hex(uint32_t value, char* buffer);
 void concat(char *dest, const char *src);
 void print_hex(int p);
 unsigned int strlen(const char str[]);
+unsigned int rand();
