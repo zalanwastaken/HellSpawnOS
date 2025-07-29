@@ -24,44 +24,71 @@ int chkfileID(int id){
     return 0; // Not found
 }
 
+// Parse the nth directory name from path into buff
 void parsepath(const char path[], char buff[], unsigned int dirN) {
-    int i = 0;  // Index in path
-    int count = 0; // How many directories we've seen
-    int j = 0;  // Index in buff
+    int i = 0, count = 0, j = 0;
 
-    // Skip leading slashes
-    while (path[i] == '/') i++;
+    while (path[i] == '/') i++; // skip leading slash
 
     while (path[i] != '\0') {
         if (count == dirN) {
-            // Start copying into buff
             while (path[i] != '/' && path[i] != '\0') {
                 buff[j++] = path[i++];
             }
             break;
         }
 
-        // Skip this directory
         while (path[i] != '/' && path[i] != '\0') i++;
-        // Skip subsequent slashes
         while (path[i] == '/') i++;
         count++;
     }
 
-    buff[j] = '\0'; // Null terminate
+    buff[j] = '\0';
 
-    // If dirN was out of range, return empty string
     if (count < dirN) {
         buff[0] = '\0';
     }
 }
 
-int findfile(char path[]){
-    volatile struct fdata *root = (volatile struct fdata*)FSROOT;
-    char buff[32];
-    for(int i = 0; i < root->childlenORfilesize; i++){
-        volatile struct fata *rootchild = (volatile struct fdata*)root->data[i];
+int matchname(char name[], char nodename[], int n){
+    for(int i = 0; i < n; i++){
+        if((int)name[i] != (int)nodename[i]){
+            return 0;
+        }
     }
+    return 1;
+}
+
+int findFileRecur(char name[], char path[], int iter, int nodeptr){
+    volatile struct fdata* node = (volatile struct fdata*)nodeptr;
+    char nodename[32];
+    for(int i = 0; i < node->namelen; i++){
+        nodename[i] = node->data[i];
+    }
+    if(strncmp(name, nodename, node->namelen) == 0){
+        return nodeptr;
+    }
+    //check if is a dir
+    if(node->isdir == 1){
+        for(int i = 0; i < node->childlenORfilesize; i++){
+            char buff[32];
+            parsepath(path, buff, iter+1);
+            if(strncmp(buff, "", 1) == 0){
+                return -1;
+            }
+            int ret = findFileRecur(buff, path, iter+1, node->data[node->namelen+i+1]);
+            if(ret != -1){
+                return ret;
+            }
+        }
+    }
+    return -1;
+}
+
+int findfile(const char *path){
+    char buff[32];
+    parsepath(path, buff, 0);
+    return findFileRecur(buff, path, 0, FSROOT);
 }
 
 void newfile(int id, const char name[], int dataloc, int size, int location){

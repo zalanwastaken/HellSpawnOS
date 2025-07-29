@@ -40,14 +40,12 @@ void kernel_main(void){
     write_string_at(0x0F, "Kernel size", (screen_w*2)+1);
     write_string_at(0x0F, buff, (screen_w*3)+1);
 
-    findfile("");
-
-    if(chkfileID(0xBEEF) == 1){
+    int kernelF = findfile("/kernel");
+    print_hex(kernelF);
+    if(kernelF != -1){
         write_string_at(0x0F, "Kernel file found !", (screen_w*4)+1);
-
-        volatile struct fdata* root = (volatile struct fdata*)FSROOT;
         // verifiy file
-        volatile struct fdata* kernel = (volatile struct fdata*)root->data[root->namelen+1];
+        volatile struct fdata* kernel = (volatile struct fdata*)kernelF;
         char name[kernel->namelen];
         for(int i = 0; i <= kernel->namelen; i++){
             name[i] = kernel->data[i];
