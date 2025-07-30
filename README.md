@@ -30,7 +30,7 @@ No parsing. No disk. Just structs and raw memory ops.
 
 ### Files are just structs:
 
-```c
+```C
 struct fdata {
     uint8_t isdir;
     uint16_t id;
@@ -50,7 +50,6 @@ Want to add a file? Just shove it in memory and pray.
 * Switches to 32-bit mode (goodbye real mode)
 * Serial logging for debugging when things explode
 * In-memory file system (SLIM FS)
-* RAM-only malloc using `heap/mem-chunkX` files
 * `newfile()`, `addchild()`, `findfile()` — your cursed FS API
 * Works in QEMU and SeaBIOS (probably won't kill your host)
 
@@ -64,7 +63,7 @@ make
 ```
 
 ### Run
-```bash
+```BASH
 make run
 ```
 
