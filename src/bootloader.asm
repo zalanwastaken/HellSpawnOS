@@ -43,6 +43,7 @@ gdt_descriptor:
 
 gdt_end:
 
+;; --- 32 BIT land ---
 [BITS 32]
 
 prot_start:
@@ -56,6 +57,8 @@ prot_start:
     mov ax, SECTORS       ; Load SECTORS into AX
     mov [0x7E0F], ax      ; Store AX into memory at 0x7E0F
     jmp 0x1000
+
+;; --- 16 BIT functions ---
 
 [BITS 16]
 beep:
@@ -74,7 +77,7 @@ beep:
     or al, 0b00000011
     out 0x61, al
 
-    ; Delay loop (approx — you can tweak this)
+    ; Delay loop
     mov cx, 0xFFFF
     .delay_loop:
         loop .delay_loop
@@ -101,6 +104,8 @@ disk_err:
     mov al, '1'
     int 0x10
     jmp $
+
+;; --- Magic number ---
 
 times 510-($-$$) db 0
 dw 0xAA55
