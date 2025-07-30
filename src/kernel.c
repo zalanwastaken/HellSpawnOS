@@ -22,6 +22,8 @@ void init(){
     initfsroot();
     newfile(rand(), "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
     addchild(FSROOT, 0x00FF);
+    newfile(rand(), "kbd", 0x7E00, 2, 0x0200);
+    addchild(FSROOT, 0x0200);
 }
 
 __attribute__((section(".start")))
@@ -57,5 +59,19 @@ void kernel_main(void){
 
     serial_write("reached end of test !\n");
 
-    while (1) {}
+    //TODO wrap file read logic in fs api
+    int kbd = findfile("root/kbd"); // get kbd file ptr
+    if(kbd == -1){
+        while(1){}
+    }
+    volatile struct fdata *kbdF = (volatile struct fdata*)kbd;
+    char *kbdData = (char*)kbdF->ptrtodata;
+    serial_write_hex(kbdF->ptrtodata);
+    kbdData[0] = '\0';
+    while (1) {
+        if(kbdData[0] != '\0'){
+            write_string(0x0F, kbdData);
+            kbdData[0] = '\0';
+        }
+    }
 }
