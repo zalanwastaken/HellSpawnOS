@@ -7,7 +7,7 @@ build:
 		out="build/$${file#src/}"; \
 		out="$${out%.c}.o"; \
 		mkdir -p "$$(dirname "$$out")"; \
-		i386-elf-gcc -m32 -ffreestanding -c "$$file" -o "$$out"; \
+		i386-elf-gcc -m32 -ffreestanding -pedantic -c "$$file" -o "$$out"; \
 	done
 
 	# Compile all ASM files to .o in build/
