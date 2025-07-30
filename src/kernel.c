@@ -18,15 +18,14 @@ void init(){
     pic_remap();
     idt_install();
     irq_install();
-}
-
-__attribute__((section(".start")))
-void kernel_main(void){
     clear_low_memory();
     initfsroot();
     newfile(rand(), "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
     addchild(FSROOT, 0x00FF);
+}
 
+__attribute__((section(".start")))
+void kernel_main(void){
     init();
     serial_write("HELLO FROM HELLSPAWNOS\n");
     serial_write("use this to debug\n");
@@ -40,19 +39,20 @@ void kernel_main(void){
     write_string_at(0x0F, "Kernel size", (screen_w*2)+1);
     write_string_at(0x0F, buff, (screen_w*3)+1);
 
-    int kernelF = findfile("/kernel");
-    print_hex(kernelF);
+    int kernelF = findfile("root/kernel");
+    serial_write_hex(kernelF);
     if(kernelF != -1){
-        write_string_at(0x0F, "Kernel file found !", (screen_w*4)+1);
+        write_string_at(0x2F, "Kernel file found !", (screen_w*4)+1);
         // verifiy file
         volatile struct fdata* kernel = (volatile struct fdata*)kernelF;
-        char name[kernel->namelen];
+        char name[kernel->namelen+1];
         for(int i = 0; i <= kernel->namelen; i++){
             name[i] = kernel->data[i];
         }
-        write_string_at(0x0F, name, (screen_w*5)+1);
+        name[kernel->namelen+1] = '\0';
+        write_string_at(0x2F, name, (screen_w*5)+1); //! give visiable verification
     }else{
-        write_string_at(0x0F, "Kernel file not found !", (screen_w*4)+1);
+        write_string_at(0x4F, "Kernel file not found !", (screen_w*4)+1);
     }
 
     serial_write("reached end of test !\n");

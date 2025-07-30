@@ -103,7 +103,7 @@ void concat(char *dest, const char *src) {
     // Null terminate the result
     *dest = '\0';
 }
-void print_hex(int p){
+void serial_write_hex(int p){
     char buff[12];
     int_to_hex(p, buff);
     concat(buff, "\n");
