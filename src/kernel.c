@@ -21,6 +21,8 @@ void kernel_main(void){
     serial_write("use this to debug\n");
     asm volatile("sti"); // enable interrupts
 
+    serial_write("starting self-FS test\n");
+
     char buff[12];
     int_to_hex(0x1000, buff);
     write_string_at(0x0F, "Kernel at", 1);
