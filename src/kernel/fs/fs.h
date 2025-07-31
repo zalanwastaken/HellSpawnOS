@@ -2,10 +2,12 @@
 #include<stdint.h>
 #pragma once
 
+void initfs();
 void newfile(int id, const char name[], int dataloc, int size, int location);
 void addchild(int parent_location, int child_location);
-void initfsroot();
 int findfile(const char *path);
+int readfile(int nodeptr, int bytestoread, int buff[]);
+int writefile(int nodeptr, int bytestowrite, int buff[]);
 
 struct fdata{
     int isdir;

@@ -2,17 +2,88 @@
 #include "../io/serial.h"
 #include "../utils.h"
 
-void initfsroot(){
-    //* root dir
-    volatile struct fdata *root = (volatile struct fdata*)FSROOT;
-    root->isdir = 1; // this is a dir(root)
-    root->id = 0xDEAD;
-    root->namelen = 3; // starting from 0
-    for(int i = 0; i <= root->namelen; i++){
-        char name[4] = "root";
-        root->data[i] = name[i]; // set its name
+void newfile(int id, const char name[], int dataloc, int size, int location){
+    volatile struct fdata *ret = (volatile struct fdata*)location;
+    ret->isdir = 0;
+    ret->id = id;
+    ret->namelen = strlen(name);
+    ret->ptrtodata = dataloc;
+    ret->childlenORfilesize = size;
+    for(int i = 0; i <= ret->namelen; i++){
+        ret->data[i] = name[i];
     }
-    root->childlenORfilesize = 0;
+}
+
+void newdir(int id, const char name[], int children[], int childrenAMT, int location){
+    volatile struct fdata *dir = (volatile struct fdata*)location;
+    dir->isdir = 1;
+    dir->id = id;
+    dir->namelen = strlen(name);
+    dir->childlenORfilesize = childrenAMT;
+    for(int i = 0; i <= dir->namelen; i++){
+        dir->data[i] = name[i];
+    }
+    for(int i = 0; i <= dir->childlenORfilesize; i++){
+        dir->data[dir->namelen+i+1] = children[i];
+    }
+}
+
+void addchild(int parent_location, int child_location){
+    volatile struct fdata *parent = (volatile struct fdata*)parent_location;
+    if(parent->isdir == 1){
+        parent->childlenORfilesize++;
+        parent->data[parent->namelen+parent->childlenORfilesize] = child_location;
+    }
+}
+
+int readfile(int nodeptr, int bytestoread, int buff[]){
+    volatile struct fdata *node = (volatile struct fdata*)nodeptr;
+    if(node->isdir == 1){
+        return -1;
+    }
+    if(node->childlenORfilesize < bytestoread){
+        return -1;
+    }
+    int *data = (int*)node->ptrtodata;
+    for(int i = 0; i < bytestoread; i++){
+        buff[i] = data[i];
+    }
+    return 0;
+}
+
+int writefile(int nodeptr, int bytestowrite, int buff[]){
+    volatile struct fdata *node = (volatile struct fdata*)nodeptr;
+    if(node->isdir == 1){
+        return -1;
+    }
+    if(node->childlenORfilesize < bytestowrite){
+        //! impl handeling later
+        return -1;
+    }
+    int *data = (int*)node->ptrtodata;
+    for(int i = 0; i < bytestowrite; i++){
+        data[i] = buff[i];
+    }
+    return 0;
+}
+
+void clear_low_memory() {
+    unsigned char* ptr = (unsigned char*)0x0000;
+    for (int i = 0; i < 0x500; i++) {
+        ptr[i] = 0x00;
+    }
+}
+
+void initfs(){
+    clear_low_memory();
+
+    int NOchildren[1] = {};
+    newdir(0xBEEF, "root", NOchildren, 0, FSROOT);
+    newfile(rand(), "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
+    addchild(FSROOT, 0x00FF);
+
+    newfile(rand(), "kbd", 0x7E00, 2, 0x0200);
+    addchild(FSROOT, 0x0200);
 }
 
 // Parse the nth directory name from path into buff
@@ -90,38 +161,4 @@ int findfile(const char *path){
     char buff[32];
     getLastPathPart(path, buff);
     return findFileRecur(buff, path, 0, FSROOT);
-}
-
-void newfile(int id, const char name[], int dataloc, int size, int location){
-    volatile struct fdata *ret = (volatile struct fdata*)location;
-    ret->isdir = 0;
-    ret->id = id;
-    ret->namelen = strlen(name);
-    ret->ptrtodata = dataloc;
-    ret->childlenORfilesize = size;
-    for(int i = 0; i <= ret->namelen; i++){
-        ret->data[i] = name[i];
-    }
-}
-
-void newdir(int id, const char name[], int children[], int childrenAMT, int location){
-    volatile struct fdata *dir = (volatile struct fdata*)location;
-    dir->isdir = 1;
-    dir->id = id;
-    dir->namelen = strlen(name);
-    dir->childlenORfilesize = childrenAMT;
-    for(int i = 0; i <= dir->namelen; i++){
-        dir->data[i] = name[i];
-    }
-    for(int i = 0; i <= dir->childlenORfilesize; i++){
-        dir->data[dir->namelen+i+1] = children[i];
-    }
-}
-
-void addchild(int parent_location, int child_location){
-    volatile struct fdata *parent = (volatile struct fdata*)parent_location;
-    if(parent->isdir == 1){
-        parent->childlenORfilesize++;
-        parent->data[parent->namelen+parent->childlenORfilesize] = child_location;
-    }
 }

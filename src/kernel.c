@@ -6,24 +6,12 @@
 #include "kernel/cursor/cursor.h"
 #include "kernel/fs/fs.h"
 
-void clear_low_memory() {
-    unsigned char* ptr = (unsigned char*)0x0000;
-    for (int i = 0; i < 0x500; i++) {
-        ptr[i] = 0x00;
-    }
-}
-
 void init(){
     init_serial();
     pic_remap();
     idt_install();
     irq_install();
-    clear_low_memory();
-    initfsroot();
-    newfile(rand(), "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
-    addchild(FSROOT, 0x00FF);
-    newfile(rand(), "kbd", 0x7E00, 2, 0x0200);
-    addchild(FSROOT, 0x0200);
+    initfs();
 }
 
 __attribute__((section(".start")))
@@ -59,19 +47,20 @@ void kernel_main(void){
 
     serial_write("reached end of test !\n");
 
-    //TODO wrap file read logic in fs api
     int kbd = findfile("root/kbd"); // get kbd file ptr
-    if(kbd == -1){
+    if(kbd == -1){ //? check for fail
         while(1){}
     }
-    volatile struct fdata *kbdF = (volatile struct fdata*)kbd;
-    char *kbdData = (char*)kbdF->ptrtodata;
-    serial_write_hex(kbdF->ptrtodata);
-    kbdData[0] = '\0';
+    int kbdData[1];
+    readfile(kbd, 1, kbdData);
     while (1) {
+        readfile(kbd, 1, kbdData);
         if(kbdData[0] != '\0'){
-            write_string(0x0F, kbdData);
-            kbdData[0] = '\0';
+            write_string(0x0F, (char*)kbdData);
+            int buff[1];
+            readfile(kbd, 1, buff);
+            buff[0] = '\0';
+            writefile(kbd, 1, buff);
         }
     }
 }
