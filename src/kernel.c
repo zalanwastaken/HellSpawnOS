@@ -3,7 +3,7 @@
 #include "kernel/kbd/pic.h"
 #include "kernel/idt/idt.h"
 #include "kernel/kbd/irq.h"
-#include "kernel/cursor/cursor.h"
+//#include "kernel/cursor/cursor.h"
 #include "kernel/fs/fs.h"
 
 void init(){
@@ -34,8 +34,8 @@ void kernel_main(void){
     int kernelF = findfile("root/kernel");
     serial_write_hex(kernelF);
     if(kernelF != -1){
-        write_string_at(0x2F, "Kernel file found !", (screen_w*4)+1);
-        // verifiy file
+        write_string_at(0x2F, "Kernel file found !", (screen_w*4)+1); // sad
+        //* verifiy file
         volatile struct fdata* kernel = (volatile struct fdata*)kernelF;
         char name[kernel->namelen+1];
         for(int i = 0; i <= kernel->namelen; i++){

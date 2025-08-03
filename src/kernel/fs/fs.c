@@ -67,6 +67,15 @@ int writefile(int nodeptr, int bytestowrite, int buff[]){
     return 0;
 }
 
+int getNodeSize(int ptr){
+    volatile struct fdata *node = (volatile struct fdata*)ptr;
+    if(node->isdir == 1){
+        return(sizeof(int)*5+(sizeof(int)*(node->childlenORfilesize+node->namelen)));
+    }else{
+        return(sizeof(int)*5+(sizeof(int)*(node->namelen)));
+    }
+}
+
 void clear_low_memory() {
     unsigned char* ptr = (unsigned char*)0x0000;
     for (int i = 0; i < 0x500; i++) {
@@ -82,8 +91,10 @@ void initfs(){
     newfile(rand(), "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
     addchild(FSROOT, 0x00FF);
 
-    newfile(rand(), "kbd", 0x7E00, 2, 0x0200);
-    addchild(FSROOT, 0x0200);
+    unsigned int loc = FSROOT+getNodeSize(FSROOT)+1;
+    newfile(rand(), "kbd", 0x7E00, 2, loc);
+    addchild(FSROOT, loc);
+    serial_write_hex(loc);
 }
 
 // Parse the nth directory name from path into buff

@@ -1,5 +1,4 @@
 #define FSROOT 0x0000
-#include<stdint.h>
 #pragma once
 
 void initfs();
@@ -8,6 +7,7 @@ void addchild(int parent_location, int child_location);
 int findfile(const char *path);
 int readfile(int nodeptr, int bytestoread, int buff[]);
 int writefile(int nodeptr, int bytestowrite, int buff[]);
+int getNodeSize(int ptr);
 
 struct fdata{
     int isdir;
