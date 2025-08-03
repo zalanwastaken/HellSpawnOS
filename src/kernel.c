@@ -5,6 +5,7 @@
 #include "kernel/kbd/irq.h"
 //#include "kernel/cursor/cursor.h"
 #include "kernel/fs/fs.h"
+#include "kernel/vga/vga.h"
 
 void init(){
     init_serial();
@@ -21,8 +22,15 @@ void kernel_main(void){
     serial_write("use this to debug\n");
     asm volatile("sti"); // enable interrupts
 
-    serial_write("starting self-FS test\n");
+    //serial_write("starting self-FS test\n");
+    init_graphics_from_realmode_vbe();
+    for(int i = 0; i < 600; i++){
+        for(int f = 0; f < 800; f++){
+            putpixel(f, i, 0xF0F0F0F0);
+        }
+    }
 
+    /*
     char buff[12];
     int_to_hex(0x1000, buff);
     write_string_at(0x0F, "Kernel at", 1);
@@ -64,5 +72,8 @@ void kernel_main(void){
             buff[0] = '\0';
             writefile(kbd, 1, buff);
         }
+    }
+    */
+    while (1){
     }
 }

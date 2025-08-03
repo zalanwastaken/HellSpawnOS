@@ -2,9 +2,17 @@
 [ORG 0x7c00]
 
 start:
-    mov ah, 0x00       ; Function: Set Video Mode
-    mov al, 0x03       ; Mode 3: 80x25 text mode
-    int 0x10           ; Call BIOS
+    mov ax, 0x4F02
+    mov bx, 0x4118
+    int 0x10
+    cmp ax, 0x004F
+    jne vga_err
+    mov ax, 0
+    mov es, ax            ; using identity-mapped low memory
+    mov ax, 0x4F01        ; VBE: Get Mode Info
+    mov cx, 0x118         ; mode number
+    mov di, 0x900         ; buffer at 0x0000:0x0900 (256-byte, 16-byte aligned)
+    int 0x10
 
     mov ax, 0x0000
     mov es, ax
@@ -102,6 +110,15 @@ disk_err:
     mov al, 'E'
     int 0x10
     mov al, '1'
+    int 0x10
+    jmp $
+
+vga_err:
+    call beep
+    mov ah, 0x0E
+    mov al, 'E'
+    int 0x10
+    mov al, '2'
     int 0x10
     jmp $
 
