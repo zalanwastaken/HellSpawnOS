@@ -21,6 +21,7 @@ extern void irq12_stub();
 extern void irq13_stub();
 extern void irq14_stub();
 extern void irq15_stub();
+extern void irq80_stub();
 
 // Simple common IRQ handler
 void irq_common_handler(int irq_num) {
@@ -55,4 +56,5 @@ void irq_install() {
     idt_set_gate(45, (uint32_t)irq13_stub, 0x08, 0x8E);
     idt_set_gate(46, (uint32_t)irq14_stub, 0x08, 0x8E);
     idt_set_gate(47, (uint32_t)irq15_stub, 0x08, 0x8E);
+    idt_set_gate(0x80, (uint32_t)irq80_stub, 0x08, 0x8E); //! SYSCALLS
 }

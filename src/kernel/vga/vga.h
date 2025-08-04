@@ -4,6 +4,12 @@
 
 void init_graphics_from_realmode_vbe();
 void putpixel(int x, int y, uint32_t color);
+void draw_char(char c, int x, int y, uint32_t color);
+void draw_string(const char *s, int x, int y, uint32_t color);
+void draw_string_scaled(const char *s, int x, int y, uint32_t color, int scale);
+void clearscreen(int color);
+void drawrect(int sx, int sy, int ex, int ey, int color);
+void drawrectFill(int sx, int sy, int ex, int ey, int color);
 
 // Only up to the fields we need; rest is ignored.
 typedef struct __attribute__((packed)) {
