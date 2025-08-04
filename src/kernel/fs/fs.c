@@ -90,6 +90,8 @@ void initfs(){
     newdir(0xBEEF, "root", NOchildren, 0, FSROOT);
     newfile(rand(), "kernel", 0x1000, (*(int*)0x7E0F)*512, 0x00FF);
     addchild(FSROOT, 0x00FF);
+    newfile(rand(), "tty", ((*(int*)0x7E0F)*512)+1, 1024, getNodeSize(0x00FF)+0x00FF);
+    addchild(FSROOT, getNodeSize(0x00FF)+0x00FF);
 
     unsigned int loc = FSROOT+getNodeSize(FSROOT)+1;
     newfile(rand(), "kbd", 0x7E00, 2, loc);

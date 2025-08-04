@@ -1,28 +1,12 @@
 #include "utils.h"
 #include "io/io.h"
 #include "io/serial.h"
-/*
-void write_string( int colour, const char *string ){
-    volatile char *video = (volatile char*)0xB8000;
-    while( *string != 0 )
-    {
-        *video++ = *string++;
-        *video++ = colour;
-    }
-}
 
-void write_string_at(int colour, const char *string, int offset) {
-    volatile char *video = (volatile char*)0xB8000 + offset * 2; 
-    while (*string != 0) {
-        *video++ = *string++;
-        *video++ = colour;
-    }
-}
-*/
 void EOI(int irq_num){
     if (irq_num >= 8) outb(0xA0, 0x20);  // slave PIC
     outb(0x20, 0x20);                    // master PIC
 }
+
 void int_to_str(int num, char* buffer) {
     int i = 0;
     if (num == 0) {
@@ -52,6 +36,7 @@ void int_to_str(int num, char* buffer) {
         buffer[k] = tmp;
     }
 }
+
 int strncmp(const char* s1, const char* s2, int n) {
     for (int i = 0; i < n; i++) {
         if (s1[i] != s2[i] || s1[i] == '\0' || s2[i] == '\0') {
@@ -60,6 +45,7 @@ int strncmp(const char* s1, const char* s2, int n) {
     }
     return 0;
 }
+
 uint32_t hex_to_int(const char* str) {
     uint32_t result = 0;
     int i = (str[0] == '0' && str[1] == 'x') ? 2 : 0;
@@ -82,6 +68,7 @@ uint32_t hex_to_int(const char* str) {
 
     return result;
 }
+
 void int_to_hex(uint32_t value, char* buffer) {
     const char* hex_chars = "0123456789ABCDEF";
     buffer[0] = '0';
@@ -92,6 +79,7 @@ void int_to_hex(uint32_t value, char* buffer) {
     }
     buffer[10] = '\0';
 }
+
 void concat(char *dest, const char *src) {
     // Move to the end of dest
     while (*dest) dest++;
@@ -106,12 +94,14 @@ void concat(char *dest, const char *src) {
     // Null terminate the result
     *dest = '\0';
 }
+
 void serial_write_hex(int p){
     char buff[12];
     int_to_hex(p, buff);
     concat(buff, "\n");
     serial_write(buff);
 }
+
 unsigned int strlen(const char str[]) {
     unsigned int len = 0;
     while (str[len] != '\0') {
