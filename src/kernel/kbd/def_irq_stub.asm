@@ -3,7 +3,7 @@ global irq%1_stub
 extern irq_common_handler
 irq%1_stub:
     cli
-    push byte %1          ; push IRQ number
+    push dword %1         ; push IRQ number as 4 bytes
     pusha
     call irq_common_handler
     popa

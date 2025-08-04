@@ -1,6 +1,7 @@
 #include "utils.h"
 #include "io/io.h"
 #include "io/serial.h"
+/*
 void write_string( int colour, const char *string ){
     volatile char *video = (volatile char*)0xB8000;
     while( *string != 0 )
@@ -9,6 +10,7 @@ void write_string( int colour, const char *string ){
         *video++ = colour;
     }
 }
+
 void write_string_at(int colour, const char *string, int offset) {
     volatile char *video = (volatile char*)0xB8000 + offset * 2; 
     while (*string != 0) {
@@ -16,6 +18,7 @@ void write_string_at(int colour, const char *string, int offset) {
         *video++ = colour;
     }
 }
+*/
 void EOI(int irq_num){
     if (irq_num >= 8) outb(0xA0, 0x20);  // slave PIC
     outb(0x20, 0x20);                    // master PIC

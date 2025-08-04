@@ -3,15 +3,15 @@
 
 start:
     mov ax, 0x4F02
-    mov bx, 0x4118
+    mov bx, 0x4114
     int 0x10
     cmp ax, 0x004F
     jne vga_err
-    mov ax, 0
+    mov ax, 0x0000
     mov es, ax            ; using identity-mapped low memory
     mov ax, 0x4F01        ; VBE: Get Mode Info
-    mov cx, 0x118         ; mode number
-    mov di, 0x900         ; buffer at 0x0000:0x0900 (256-byte, 16-byte aligned)
+    mov cx, 0x0114         ; mode number
+    mov di, 0x0900         ; buffer at 0x0000:0x0900 (256-byte, 16-byte aligned)
     int 0x10
 
     mov ax, 0x0000

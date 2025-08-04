@@ -6,6 +6,7 @@
 //#include "kernel/cursor/cursor.h"
 #include "kernel/fs/fs.h"
 #include "kernel/vga/vga.h"
+#include "kernel/vga/font.h"
 
 void init(){
     init_serial();
@@ -13,6 +14,15 @@ void init(){
     idt_install();
     irq_install();
     initfs();
+    init_graphics_from_realmode_vbe();
+}
+
+void clearscreen(int color){
+    for(int i = 0; i < 600; i++){
+        for(int f = 0; f < 800; f++){
+            putpixel(f, i, color); //! RR GG BB
+        }
+    }
 }
 
 __attribute__((section(".start")))
@@ -22,58 +32,27 @@ void kernel_main(void){
     serial_write("use this to debug\n");
     asm volatile("sti"); // enable interrupts
 
-    //serial_write("starting self-FS test\n");
-    init_graphics_from_realmode_vbe();
-    for(int i = 0; i < 600; i++){
-        for(int f = 0; f < 800; f++){
-            putpixel(f, i, 0xF0F0F0F0);
-        }
+    clearscreen(0x000000);
+    draw_string_scaled("HellSpawnOS", (800/2)-11*16, 600/2, 0x00FF00, 4);
+
+    int kbd = findfile("root/kbd");
+    if(kbd == -1){
+        while (1){}
     }
-
-    /*
-    char buff[12];
-    int_to_hex(0x1000, buff);
-    write_string_at(0x0F, "Kernel at", 1);
-    write_string_at(0x0F, buff, screen_w+1);
-    int_to_hex((*(int*)0x7e0f)*512, buff);
-    write_string_at(0x0F, "Kernel size", (screen_w*2)+1);
-    write_string_at(0x0F, buff, (screen_w*3)+1);
-
-    int kernelF = findfile("root/kernel");
-    serial_write_hex(kernelF);
-    if(kernelF != -1){
-        write_string_at(0x2F, "Kernel file found !", (screen_w*4)+1); // sad
-        //* verifiy file
-        volatile struct fdata* kernel = (volatile struct fdata*)kernelF;
-        char name[kernel->namelen+1];
-        for(int i = 0; i <= kernel->namelen; i++){
-            name[i] = kernel->data[i];
-        }
-        name[kernel->namelen+1] = '\0';
-        write_string_at(0x2F, name, (screen_w*5)+1); //! give visiable verification
-    }else{
-        write_string_at(0x4F, "Kernel file not found !", (screen_w*4)+1);
-    }
-
-    serial_write("reached end of test !\n");
-
-    int kbd = findfile("root/kbd"); // get kbd file ptr
-    if(kbd == -1){ //? check for fail
-        while(1){}
-    }
-    int kbdData[1];
-    readfile(kbd, 1, kbdData);
-    while (1) {
-        readfile(kbd, 1, kbdData);
-        if(kbdData[0] != '\0'){
-            write_string(0x0F, (char*)kbdData);
-            int buff[1];
-            readfile(kbd, 1, buff);
+    int buff[1];
+    buff[0] = '\0';
+    writefile(kbd, 1, buff);
+    char vbuff[255];
+    int vbuffs = 0;
+    while (1){
+        readfile(kbd, 1, buff);
+        if(buff[0] != '\0'){
+            vbuff[vbuffs] = buff[0];
+            vbuff[vbuffs+1] = '\0';
+            draw_char(vbuff[vbuffs], vbuffs*8, 0, 0xFFFFFF);
+            vbuffs++;
             buff[0] = '\0';
             writefile(kbd, 1, buff);
         }
-    }
-    */
-    while (1){
     }
 }

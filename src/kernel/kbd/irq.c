@@ -24,10 +24,14 @@ extern void irq15_stub();
 
 // Simple common IRQ handler
 void irq_common_handler(int irq_num) {
+    if(irq_num > 15){ //! THIS IS A HACK !
+        EOI(irq_num);
+        return;
+    }
     if(irq_num != 0){ // check for PIT
-        char msg[] = "IRQX\n";
-        msg[3] = '0' + irq_num;  // just shows 0–9, extend if needed
+        char msg[] = "IRQ ";
         serial_write(msg);
+        serial_write_hex(irq_num);
     }
 
     // End of Interrupt
