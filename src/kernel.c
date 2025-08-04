@@ -46,6 +46,9 @@ void kernel_main(void){
             if(buff[0] == '\n'){
                 y = y+8;
                 x = 0;
+                vbuff[vbuffs] = '\n';
+                vbuff[vbuffs+1] = '\0';
+                vbuffs++;
                 buff[0] = '\0';
                 writefile(kbd, 1, buff);
                 drawrect(x+8, y+8, x+16, y+8, 0xFFFFFF); //? draw cursor
@@ -54,6 +57,18 @@ void kernel_main(void){
             if(buff[0] == '\b'){
                 drawrectFill(x, y, x+16, y+16, 0x000000);
                 x = x - 8;
+                if(x < 0 && 1 != 1){ //! just dont run
+                    int r = 0;
+                    for(int i = vbuffs-1; i > 0; i--){
+                        if(vbuff[i] == '\n' && i != vbuffs-1){
+                            r = i;
+                            serial_write_hex(r);
+                            break;
+                        }
+                    }
+                    y -= 8;
+                    x = r*8;
+                }
                 buff[0] = '\0';
                 vbuffs--;
                 vbuff[vbuffs] = '\0';
