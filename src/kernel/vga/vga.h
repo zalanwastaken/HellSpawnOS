@@ -1,6 +1,13 @@
 #include <stdint.h>
 
 #define VBE_MODE_INFO_PHYS 0x900
+//* colors
+#define CLR_RED   0xFF0000
+#define CLR_GREEN 0x00FF00
+#define CLR_BLUE  0x0000FF
+#define CLR_BLACK 0x000000
+#define CLR_WHITE 0xFFFFFF
+
 
 void init_graphics_from_realmode_vbe();
 void putpixel(int x, int y, uint32_t color);
