@@ -23,18 +23,27 @@ void kernel_main(void){
     serial_write("use this to debug\n");
     asm volatile("sti"); // enable interrupts
 
-    asm volatile("int $0x80");
+    asm volatile(
+        "mov $0, %eax\n"
+        "mov $65, %ebx\n"
+        "int $0x80"
+    );
 
     clearscreen(0x000000);
     draw_string_scaled("HellSpawnOS", (800/2)-11*16, 600/2, 0xFF0000, 4);
     char msg[] = "Hello World !\nmeow";
     int msgint[strlen(msg)+1];
-    for(int i = 0; i < strlen(msg)+1; i++){
-        msgint[i] = (int)msg[i];
-    }
+    str_to_int(msg, msgint);
     int fileptr = findfile("root/tty");
-    writefile(fileptr, strlen(msg), msgint);
+    //writefile(fileptr, strlen(msg), msgint);
     renderTTY(); // render tty
+
+    draw_string("Hello from HellSpawnOS", 0, 60, CLR_WHITE);
+
+    asm volatile(
+        "mov $2, %eax\n"
+        "int $0x80"
+    );
 
     while (1){}
 }
