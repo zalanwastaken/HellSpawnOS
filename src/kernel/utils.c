@@ -7,7 +7,7 @@ void EOI(int irq_num){
     outb(0x20, 0x20);                    // master PIC
 }
 
-void int_to_str(int num, char* buffer) {
+void int_to_intstr(int num, char* buffer) {
     int i = 0;
     if (num == 0) {
         buffer[i++] = '0';
@@ -34,6 +34,13 @@ void int_to_str(int num, char* buffer) {
         char tmp = buffer[j];
         buffer[j] = buffer[k];
         buffer[k] = tmp;
+    }
+}
+
+//! also adds null terminator
+void str_to_int(char charbuff[], int intbuff[]){
+    for(int i = 0; i < strlen(charbuff)+1; i++){
+        intbuff[i] = (int)charbuff[i];
     }
 }
 

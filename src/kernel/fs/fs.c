@@ -51,7 +51,7 @@ int readfile(int nodeptr, int bytestoread, int buff[]){
     return 0;
 }
 
-int writefile(int nodeptr, int bytestowrite, int buff[]){
+int writefileAppend(int nodeptr, int bytestowrite, int buff[], int appendFrom){
     volatile struct fdata *node = (volatile struct fdata*)nodeptr;
     if(node->isdir == 1){
         return -1;
@@ -62,9 +62,14 @@ int writefile(int nodeptr, int bytestowrite, int buff[]){
     }
     int *data = (int*)node->ptrtodata;
     for(int i = 0; i < bytestowrite; i++){
-        data[i] = buff[i];
+        data[i+appendFrom] = buff[i];
     }
     return 0;
+}
+
+
+int writefile(int nodeptr, int bytestowrite, int buff[]){
+    writefileAppend(nodeptr, bytestowrite, buff, 0);
 }
 
 int getNodeSize(int ptr){
