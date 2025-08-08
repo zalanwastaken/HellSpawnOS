@@ -7,6 +7,14 @@
 #include "kernel/vga/vga.h"
 #include "kernel/tty/tty.h"
 
+void panic(){
+    asm volatile(
+        "mov $2, %eax\n" // panic syscall
+        "mov $0, %ebx\n" // panic code
+        "int $0x80"
+    );
+}
+
 void init(){
     init_serial();
     initfs();
@@ -31,19 +39,8 @@ void kernel_main(void){
 
     clearscreen(0x000000);
     draw_string_scaled("HellSpawnOS", (800/2)-11*16, 600/2, 0xFF0000, 4);
-    char msg[] = "Hello World !\nmeow";
-    int msgint[strlen(msg)+1];
-    str_to_int(msg, msgint);
-    int fileptr = findfile("root/tty");
-    //writefile(fileptr, strlen(msg), msgint);
-    renderTTY(); // render tty
 
-    draw_string("Hello from HellSpawnOS", 0, 60, CLR_WHITE);
-
-    asm volatile(
-        "mov $2, %eax\n"
-        "int $0x80"
-    );
-
-    while (1){}
+    draw_string("Hello from HellSpawnOS", 0, 70, CLR_WHITE);
+    serial_write("The kernel will now panic. This is not a bug !\n");
+    panic();
 }
