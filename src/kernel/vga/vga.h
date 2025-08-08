@@ -2,12 +2,29 @@
 
 #define VBE_MODE_INFO_PHYS 0x900
 //* colors
-#define CLR_RED   0xFF0000
-#define CLR_GREEN 0x00FF00
-#define CLR_BLUE  0x0000FF
-#define CLR_BLACK 0x000000
-#define CLR_WHITE 0xFFFFFF
-
+#define CLR_RED       0xFF0000
+#define CLR_GREEN     0x00FF00
+#define CLR_BLUE      0x0000FF
+#define CLR_BLACK     0x000000
+#define CLR_WHITE     0xFFFFFF
+#define CLR_YELLOW    0xFFFF00
+#define CLR_CYAN      0x00FFFF
+#define CLR_MAGENTA   0xFF00FF
+#define CLR_GRAY      0x808080
+#define CLR_DARKGRAY  0x404040
+#define CLR_LIGHTGRAY 0xC0C0C0
+#define CLR_ORANGE    0xFFA500
+#define CLR_BROWN     0x8B4513
+#define CLR_PURPLE    0x800080
+#define CLR_PINK      0xFFC0CB
+#define CLR_LIME      0xBFFF00
+#define CLR_TEAL      0x008080
+#define CLR_NAVY      0x000080
+#define CLR_MAROON    0x800000
+#define CLR_OLIVE     0x808000
+#define CLR_GOLD      0xFFD700
+#define CLR_SKYBLUE   0x87CEEB
+#define CLR_VIOLET    0xEE82EE
 
 void init_graphics_from_realmode_vbe();
 void putpixel(int x, int y, uint32_t color);
