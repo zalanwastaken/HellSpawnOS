@@ -1,4 +1,5 @@
 #include "kernel/io/serial.h"
+#include "kernel/io/io.h"
 #include "kernel/utils.h"
 #include "kernel/pic/pic.h"
 #include "kernel/idt/idt.h"
@@ -7,14 +8,6 @@
 #include "kernel/vga/vga.h"
 #include "kernel/tty/tty.h"
 
-void panic(){
-    asm volatile(
-        "mov $2, %eax\n" // panic syscall
-        "mov $0, %ebx\n" // panic code
-        "int $0x80"
-    );
-}
-
 void init(){
     init_serial();
     initfs();
@@ -22,6 +15,7 @@ void init(){
     idt_install();
     irq_install();
     init_graphics_from_realmode_vbe();
+    //ps2_mouse_init();
 }
 
 __attribute__((section(".start")))
@@ -41,6 +35,9 @@ void kernel_main(void){
     draw_string_scaled("HellSpawnOS", (800/2)-11*16, 600/2, 0xFF0000, 4);
 
     draw_string("Hello from HellSpawnOS", 0, 70, CLR_WHITE);
-    serial_write("The kernel will now panic. This is not a bug !\n");
-    panic();
+    //serial_write("The kernel will now panic. This is not a bug !\n");
+    //panic();
+    while (1){
+        asm volatile("hlt");
+    }
 }

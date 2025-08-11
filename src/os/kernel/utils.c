@@ -126,3 +126,14 @@ unsigned int rand(){
 void srand(unsigned int s){
     seed = s;
 }
+
+void panic(int panicCode){
+    asm volatile(
+        "movl $2, %%eax\n\t"
+        "movl %0, %%ebx\n\t"
+        "int $0x80"
+        :
+        : "r" (panicCode)
+        : "%eax", "%ebx"
+    );
+}

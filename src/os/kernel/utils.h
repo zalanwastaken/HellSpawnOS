@@ -13,3 +13,4 @@ void serial_write_hex(int p);
 unsigned int strlen(const char str[]);
 unsigned int rand();
 void str_to_int(char charbuff[], int intbuff[]);
+void panic(int panicCode);

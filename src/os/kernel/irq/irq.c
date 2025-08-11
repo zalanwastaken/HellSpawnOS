@@ -17,11 +17,12 @@ extern void irq8_stub();
 extern void irq9_stub();
 extern void irq10_stub();
 extern void irq11_stub();
-extern void irq12_stub();
 extern void irq13_stub();
 extern void irq14_stub();
 extern void irq15_stub();
+
 extern void irq80_stub();
+extern void irq44_stub();
 
 // Simple common IRQ handler
 void irq_common_handler(int irq_num) {
@@ -41,7 +42,7 @@ void irq_common_handler(int irq_num) {
 
 void irq_install() {
     idt_set_gate(32, (uint32_t)irq0_stub,  0x08, 0x8E);
-    idt_set_gate(33, (uint32_t)irq1_stub,  0x08, 0x8E); // IRQ1 = keyboard
+    idt_set_gate(33, (uint32_t)irq1_stub,  0x08, 0x8E); //! keyboard
     idt_set_gate(34, (uint32_t)irq2_stub,  0x08, 0x8E);
     idt_set_gate(35, (uint32_t)irq3_stub,  0x08, 0x8E);
     idt_set_gate(36, (uint32_t)irq4_stub,  0x08, 0x8E);
@@ -52,7 +53,7 @@ void irq_install() {
     idt_set_gate(41, (uint32_t)irq9_stub,  0x08, 0x8E);
     idt_set_gate(42, (uint32_t)irq10_stub, 0x08, 0x8E);
     idt_set_gate(43, (uint32_t)irq11_stub, 0x08, 0x8E);
-    idt_set_gate(44, (uint32_t)irq12_stub, 0x08, 0x8E);
+    idt_set_gate(44, (uint32_t)irq44_stub, 0x08, 0x8E); //! MOUSE
     idt_set_gate(45, (uint32_t)irq13_stub, 0x08, 0x8E);
     idt_set_gate(46, (uint32_t)irq14_stub, 0x08, 0x8E);
     idt_set_gate(47, (uint32_t)irq15_stub, 0x08, 0x8E);

@@ -1,6 +1,10 @@
 #include <stdint.h>
 
 #define VBE_MODE_INFO_PHYS 0x900
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+
 //* colors
 #define CLR_RED       0xFF0000
 #define CLR_GREEN     0x00FF00

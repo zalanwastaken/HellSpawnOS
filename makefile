@@ -3,7 +3,7 @@ build:
 	mkdir -p build
 
 	# Compile all C files to .o in build/
-	find src -type f -name "*.c" | while read file; do \
+	find src/os -type f -name "*.c" | while read file; do \
 		out="build/$${file#src/}"; \
 		out="$${out%.c}.o"; \
 		mkdir -p "$$(dirname "$$out")"; \
@@ -11,7 +11,7 @@ build:
 	done
 
 	# Compile all ASM files to .o in build/
-	find src/kernel -type f -name "*.asm" | while read file; do \
+	find src/os/kernel -type f -name "*.asm" | while read file; do \
 		out="build/$${file#src/}"; \
 		out="$${out%.asm}.o"; \
 		mkdir -p "$$(dirname "$$out")"; \
@@ -23,7 +23,7 @@ build:
 		-o build/kernel.bin $$(find build -type f -name "*.o")
 
 	# Bootloader (raw binary for sector 0 only)
-	nasm -DSECTORS=$$(stat -c%b build/kernel.bin) -f bin src/bootloader.asm -o build/bootloader.bin
+	nasm -DSECTORS=$$(stat -c%b build/kernel.bin) -f bin src/os/bootloader.asm -o build/bootloader.bin
 
 	# Create disk image
 	dd if=/dev/zero of=build/os.img bs=512 count=2880
