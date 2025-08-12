@@ -1,7 +1,9 @@
+#pragma once
+
 #define screen_w 80
 #define screen_h 25
+
 #include<stdint.h>
-#pragma once
 
 void EOI(int irq_num);
 void int_to_intstr(int num, char* buffer);

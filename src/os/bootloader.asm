@@ -18,11 +18,19 @@ start:
     mov es, ax
     mov bx, 0x1000
     mov ah, 0x02
-    mov al, SECTORS
+    mov al, SECTORS  ; size of kernel
     mov ch, 0
     mov cl, 9
     mov dh, 0
-    mov dl, 0x80
+    mov dl, 0x80  ; DRIVE "C"
+    int 0x13
+    jc disk_err
+
+    mov bx, 0x9000
+    mov ah, 0x02
+    mov al, SECTORSINIT  ; size of init file
+    mov cl, 2
+    mov dl, 0x80   ; DRIVE "C"
     int 0x13
     jc disk_err
 

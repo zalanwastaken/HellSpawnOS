@@ -8,6 +8,8 @@
 #include "kernel/vga/vga.h"
 #include "kernel/tty/tty.h"
 
+typedef void (*entry_t)(void);
+
 void init(){
     init_serial();
     initfs();
@@ -18,6 +20,11 @@ void init(){
     //ps2_mouse_init();
 }
 
+void jumpToInit(void){
+    entry_t init = (entry_t)0x9000;
+    init();
+}
+
 __attribute__((section(".start")))
 void kernel_main(void){
     init();
@@ -25,19 +32,14 @@ void kernel_main(void){
     serial_write("use this to debug\n");
     asm volatile("sti"); // enable interrupts
 
-    asm volatile(
-        "mov $0, %eax\n"
-        "mov $65, %ebx\n"
-        "int $0x80"
-    );
-
     clearscreen(0x000000);
     draw_string_scaled("HellSpawnOS", (800/2)-11*16, 600/2, 0xFF0000, 4);
 
     draw_string("Hello from HellSpawnOS", 0, 70, CLR_WHITE);
     //serial_write("The kernel will now panic. This is not a bug !\n");
     //panic();
+    jumpToInit();
     while (1){
-        asm volatile("hlt");
+        asm volatile("hlt"); // just STOP
     }
 }

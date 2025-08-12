@@ -1,4 +1,8 @@
 .PHONY: build
+
+CC = i386-elf-gcc
+LD = i386-elf-ld 
+
 build:
 	mkdir -p build
 
@@ -21,13 +25,19 @@ build:
 	# Link everything into kernel.bin
 	i386-elf-ld -T link.ld -m elf_i386 -nostdlib --oformat=binary \
 		-o build/kernel.bin $$(find build -type f -name "*.o")
+	
+	# Make init
+	mkdir -p build/prog/init/
+	i386-elf-gcc -m32 -ffreestanding -pedantic -c src/prog/init/init.c -o build/prog/init/init.o
+	i386-elf-ld -T src/prog/init/link.ld -m elf_i386 -nostdlib --oformat=binary -o build/init.bin build/prog/init/init.o 
 
 	# Bootloader (raw binary for sector 0 only)
-	nasm -DSECTORS=$$(stat -c%b build/kernel.bin) -f bin src/os/bootloader.asm -o build/bootloader.bin
+	nasm -DSECTORS=$$(stat -c%b build/kernel.bin) -DSECTORSINIT=$$(stat -c%b build/init.bin) -f bin src/os/bootloader.asm -o build/bootloader.bin
 
 	# Create disk image
 	dd if=/dev/zero of=build/os.img bs=512 count=2880
 	dd if=build/bootloader.bin of=build/os.img conv=notrunc
+	dd if=build/init.bin of=build/os.img bs=512 seek=1 conv=notrunc
 	dd if=build/kernel.bin of=build/os.img bs=1 seek=4096 conv=notrunc
 
 run:

@@ -1,6 +1,7 @@
 #define SYSCALL_TTY_W 0
-#define SYSCALL_TTY_R 1 //! NOT IMPLIMENTED
+#define SYSCALL_TTY_RENDER 1
 #define SYSCALL_KPANIC 2
+#define SYSCALL_PRINT_AT 3
 
 extern void reboot();
 
@@ -9,6 +10,7 @@ extern void reboot();
 #include "../fs/fs.h"
 #include "../vga/vga.h"
 #include "../io/io.h"
+#include "../tty/tty.h"
 
 typedef struct regs{
     int EDI, ESI, EBP, ESP, EBX, EDX, ECX, EAX;
@@ -23,13 +25,22 @@ void syscallDebug(regs *registers){
     serial_write_hex(registers->ECX); // this adds \n new line
     serial_write("EDX: ");
     serial_write_hex(registers->EDX); // this adds \n new line
+    serial_write("EBP: ");
+    serial_write_hex(registers->EBP);
 }
 
 void dispatch(regs *registers){
     if(registers->EAX == SYSCALL_TTY_W){
         int wri[] = {registers->EBX, '\0'};
         int file = findfile("root/tty");
+        if(file == -1){
+            panic(0x02);
+        }
         writefile(file, 2, wri);
+    }
+
+    if(registers->EAX == SYSCALL_TTY_RENDER){
+        renderTTY();
     }
 
     if(registers->EAX == SYSCALL_KPANIC){
@@ -53,6 +64,14 @@ void dispatch(regs *registers){
                 reboot();
             }
         }
+    }
+
+    if(registers->EAX == SYSCALL_PRINT_AT){
+        int color = registers->EBX;
+        int x = registers->ECX;
+        int y = registers->EDX;
+        char *str = (char*)registers->ESI; // assume its \0 terminated
+        draw_string(str, x, y, color);
     }
 }
 
