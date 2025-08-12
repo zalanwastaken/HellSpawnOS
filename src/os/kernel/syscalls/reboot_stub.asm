@@ -1,10 +1,9 @@
 global reboot
 
 reboot:
-    cli                     ; disable interrupts
-    lidt [zero_idt]        ; load an empty/invalid IDT
-    int 0x03               ; cause an interrupt → no handler → double fault → triple fault → REBOOT
-
-zero_idt:
-    dw 0               ; limit = 0
-    dd 0               ; base = 0
+    cli
+    mov al, 0xFE          ; pulse CPU reset line
+    out 0x64, al          ; write to PS/2 keyboard controller command port
+.hang:
+    hlt                   ; in case it doesn’t reboot instantly
+    jmp .hang
