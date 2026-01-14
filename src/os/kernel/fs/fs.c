@@ -181,7 +181,7 @@ int findFileRecur(char name[], const char path[], int iter, int nodeptr){
     return -1;
 }
 
-int findfile(const char *path){
+int getfilePTR(const char *path){
     char buff[32];
     getLastPathPart(path, buff);
     return findFileRecur(buff, path, 0, FSROOT);

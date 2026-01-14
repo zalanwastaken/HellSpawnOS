@@ -8,15 +8,15 @@ SECTIONS {
         *(.text*)
     }
 
-    .rodata ALIGN(4K) : {
+    .rodata ALIGN(2K) : {
         *(.rodata*)
     }
 
-    .data ALIGN(4K) : {
+    .data ALIGN(2K) : {
         *(.data*)
     }
 
-    .bss ALIGN(4K) (NOLOAD) : {
+    .bss ALIGN(2K) (NOLOAD) : {
         *(COMMON)
         *(.bss*)
     }

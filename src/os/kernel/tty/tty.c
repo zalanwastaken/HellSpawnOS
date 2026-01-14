@@ -8,7 +8,7 @@ void flush(char str[], int x, int y){
 }
 
 int renderTTY(){
-    int file = findfile("root/tty");
+    int file = getfilePTR("root/tty");
     if(file == -1){
         return -1;
     }else{

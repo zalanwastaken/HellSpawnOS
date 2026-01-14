@@ -32,13 +32,11 @@ void kernel_main(void){
     serial_write("use this to debug\n");
     asm volatile("sti"); // enable interrupts
 
-    clearscreen(0x000000);
+    clearscreen(CLR_BLACK);
     draw_string_scaled("HellSpawnOS", (800/2)-11*16, 600/2, 0xFF0000, 4);
 
-    draw_string("Hello from HellSpawnOS", 0, 70, CLR_WHITE);
-    //serial_write("The kernel will now panic. This is not a bug !\n");
-    //panic();
-    jumpToInit();
+    draw_string("Hello from HellSpawnOS Kernel", 0, 70, CLR_WHITE);
+    //jumpToInit();
     while (1){
         asm volatile("hlt"); // just STOP
     }
