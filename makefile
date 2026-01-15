@@ -11,7 +11,7 @@ build:
 		i386-elf-gcc -m32 -ffreestanding -pedantic -c "$$file" -o "$$out"; \
 	done
 	# Compile kernel.c
-	i386-elf-gcc -m32 -ffreestanding -pedantic -c src/os/kernel.c -o build/os/kernel.o
+	#i386-elf-gcc -m32 -ffreestanding -pedantic -c src/os/kernel/kernel.c -o build/os/kernel.o
 
 	# Compile all ASM files to .o in build/
 	find src/os/kernel -type f -name "*.asm" | while read file; do \
@@ -26,12 +26,11 @@ build:
 		-o build/kernel.bin $$(find build -type f -name "*.o")
 
 	# Bootloader (raw binary for sector 0 only)
-	nasm -DSECTORS=$$(stat -c%b build/kernel.bin) -DSECTORSINIT=$$(stat -c%b build/init.bin) -f bin src/os/bootloader.asm -o build/bootloader.bin
+	nasm -DSECTORS=$$(stat -c%b build/kernel.bin) -f bin src/os/bootloader.asm -o build/bootloader.bin
 
 	# Create disk image
 	dd if=/dev/zero of=build/os.img bs=512 count=2880
 	dd if=build/bootloader.bin of=build/os.img conv=notrunc
-	dd if=build/init.bin of=build/os.img bs=512 seek=1 conv=notrunc
 	dd if=build/kernel.bin of=build/os.img bs=1 seek=4096 conv=notrunc
 
 run:
