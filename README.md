@@ -1,105 +1,70 @@
-# HELLSPAWN OS
+# 🔥 HellFireOS 🔥
+> a handcrafted OS because **why not** 😈
 
-> Bare metal. No rules. RAM is the law.
+HellFireOS is a from-scratch hobby operating system written in **C + x86 ASM**.
+No libc. No BIOS hand-holding. Just raw CPU vibes.
 
-Welcome to **HELLSPAWN OS** — a hobby operating system where every file is a struct, every mistake overwrites RAM, and every `make run` is a gamble.
-
-No libc. No safety. Just raw C, assembly, and a burning desire to own every byte of memory between `0x0000` and `0x04FF`.
-
----
-
-## ⚔️ What This Is
-
-- A **real mode → protected mode** bootloader in x86 ASM.
-- A **custom kernel** in C that doesn’t care about your segmentation faults.
-- A **filesystem** (SLIM FS) that exists only in RAM and in vibes.
+This project exists because:
+- learning OS dev is cool
+- pain is temporary
+- serial logs are forever
 
 ---
 
-## 💾 SLIM FS
+## ✨ Current Features
+- ✅ Custom bootloader
+- ✅ Protected mode (32-bit)
+- ✅ Serial output (COM1)
+- ⌨️ Keyboard **(WIP)**
 
-> **S**mall  
-> **L**ightweight  
-> **I**mplemented  
-> **M**anagement  
-> **f**ile  
-> **s**ystem
+---
 
-SLIM FS stores your entire file system in RAM.  
-No parsing. No disk. Just structs and raw memory ops.
+## ❌ Not Implemented (Yet)
+- ❌ Filesystem
+- ❌ Memory allocator (`malloc/free`)
+- ❌ Syscalls
+- ❌ User mode
+- ❌ ELF loading
+- ❌ libc / `unistd.h`
 
-### Files are just structs:
+---
 
-```C
-struct fdata {
-    uint8_t isdir;
-    uint16_t id;
-    uint8_t namelen;
-    uint32_t ptrtodata;
-    uint32_t childlenORfilesize;
-    uint32_t data[];
-};
+## 🧪 Running (QEMU)
+```bash
+make
+make run
 ````
 
-Want to add a file? Just shove it in memory and pray.
+Serial output is your best friend 🫂
 
 ---
 
-## 🔥 Features
+## 🧭 Roadmap
 
-* Switches to 32-bit mode (goodbye real mode)
-* Serial logging for debugging when things explode
-* In-memory file system (SLIM FS)
-* `newfile()`, `addchild()`, `findfile()` — your cursed FS API
-* Works in QEMU and SeaBIOS (probably won't kill your host)
-
----
-
-## 💀 How To Run & Build
-
-### Build
-```BASH
-make
-```
-
-### Run
-```BASH
-make run
-```
-
-Requirements:
-
-* `nasm`
-* `qemu`
-* `i386-elf-gcc`
-* `i386-elf-ld`
-* A healthy disregard for stability
-```BASH
-sudo pacman -S nasm qemu-full
-yay -S i386-elf-gcc
-```
+* [ ] Keyboard driver
+* [ ] Simple heap allocator
+* [ ] Basic filesystem
+* [ ] Syscall interface
+* [ ] Userspace
 
 ---
 
-## ⚠️ Known Problems (Features?)
+## ⚠️ Disclaimer
 
-* If you touch memory wrong, the system dies — gloriously.
-* Every file must be manually injected via `newfile()` calls in C.
-* No disk I/O yet. FS is reset on every boot. Deal with it.
+This OS is:
 
----
+* not secure
+* not stable
+* not fast
+* not POSIX
+* not sane
 
-## 🤘 Philosophy
-
-> C is not a language. It’s a dare.
-
-HELLSPAWN OS isn’t here to protect you. It’s here to **let you write directly to address `0x0000`** and **call that the root directory**.
-It’s a love letter to chaos. A middle finger to bloat.
-A reminder that real devs write their own file system in RAM because they *can.*
+But it **boots**, and that’s what matters 💪🔥
 
 ---
 
-## 🧙‍♂️ Author
+## 💖 Why?
 
-**zalanwastaken**
-Wielder of `0xBEEF`, destroyer of RAM, and builder of machines that should not work but somehow do.
+Because writing an OS teaches you more than 100 tutorials ever will.
+
+Also because it’s funny.
