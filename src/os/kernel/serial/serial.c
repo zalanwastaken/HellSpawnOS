@@ -1,13 +1,12 @@
 #define COM1 0x3F8
 
-#include<stdint.h>
 #include"serial.h"
 
-static inline void outb(uint16_t port, uint8_t val) {
+void outb(uint16_t port, uint8_t val) {
     __asm__ volatile ("outb %0, %1" : : "a"(val), "Nd"(port));
 }
 
-static inline uint8_t inb(uint16_t port) {
+uint8_t inb(uint16_t port) {
     uint8_t ret;
     __asm__ volatile ("inb %1, %0" : "=a"(ret) : "Nd"(port));
     return ret;
@@ -33,4 +32,14 @@ void serial_write(char c) {
 
 void serial_print(const char* s) {
     while (*s) serial_write(*s++);
+}
+
+void serial_print_hex(uint32_t val){
+    char hex[] = "0123456789ABCDEF";
+    serial_print("0x");
+
+    for(int i = 28; i >= 0; i -= 4){
+        char c = hex[(val >> i) & 0xF];
+        serial_write(c);
+    }
 }

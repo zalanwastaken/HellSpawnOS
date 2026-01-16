@@ -64,7 +64,7 @@ prot_start:
     mov esp, 0x90000
     mov ax, SECTORS       ; Load SECTORS into AX
     mov [0x7E0F], ax      ; Store AX into memory at 0x7E0F
-    jmp 0x1000
+    jmp 0x1000            ; jump to kernel
 
 ;; --- 16 BIT functions ---
 
