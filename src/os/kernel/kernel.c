@@ -21,13 +21,17 @@ void kernel_main(void){
 
     init();
 
-    for (int i = 0; i<100; i++){
+    for (int i = 0; i<150; i++){
         for(int f = 0; f<100; f++){
-            vbe_putpixel(graphicsInfo, i, f, vbe_rgb(graphicsInfo, 255, 0, 255));
+            vbe_putpixel(graphicsInfo, i, f, vbe_rgb(graphicsInfo, 255, 255, 255));
         }
     }
+    vbe_draw_string_scaled(0, 0, "Hello World !", vbe_rgb(graphicsInfo, 255, 0, 0), 2);
 
+    char *kbdChar = (char*)0x7E21;
+    uint8_t *charidx = (uint8_t*)0x7E20;
+    uint8_t placement = 0;
     while (1){
-        asm volatile("hlt"); // just STOP
+        asm volatile("hlt");
     }
 }

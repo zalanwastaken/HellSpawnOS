@@ -44,11 +44,6 @@ void just_pass_C(uint32_t int_no){
     EOI(irq);
 }
 
-void kbd_handler_C(uint8_t scancode){ //! this sends EOI in the asm
-    serial_print_hex(scancode);
-    serial_print("\n");
-}
-
 //* asm funcs
 //? check caller.asm
 

@@ -43,3 +43,5 @@ extern VBE *graphicsInfo; //! in graphics.c
 
 uint32_t vbe_rgb(VBE* m, uint8_t r, uint8_t g, uint8_t b);
 void vbe_putpixel(VBE* m, int x, int y, uint32_t color);
+void vbe_draw_string(int x, int y, const char* str, uint32_t color);
+void vbe_draw_string_scaled(int x, int y, const char* str, uint32_t color, int scale);
