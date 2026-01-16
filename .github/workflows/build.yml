@@ -3,6 +3,8 @@ name: Build HellSpawnOS
 on:
   push:
     branches: [ main ]
+    paths:
+      - "src/**"
   pull_request:
     branches: [ main ]
 
@@ -11,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Cache compiler
+      id: cache-cross
+      uses: actions/cache@v3
+      with:
+        path: $HOME/opt/cross
+        key: cross-i386-elf-v1
     - name: Clone repo
       uses: actions/checkout@v3
 
@@ -20,6 +28,7 @@ jobs:
         sudo apt install -y build-essential bison flex libgmp-dev libmpc-dev libmpfr-dev texinfo qemu-system-x86 nasm
 
     - name: Build i386-elf cross-compiler
+      if: steps.cache-cross.outputs.cache-hit != 'true'
       run: |
         mkdir -p $HOME/src
         cd $HOME/src
