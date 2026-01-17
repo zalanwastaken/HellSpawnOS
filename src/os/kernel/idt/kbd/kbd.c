@@ -4,13 +4,11 @@ bool shift = false;
 bool caps_lock = false;
 
 char *place = (char*)0x7E21;
-uint8_t *placeidx = (uint8_t*)0x7E20;
 
 void init_kbd(){
     outb(0x21, 0xFD); // 11111101 → enable IRQ1 (keyboard)
     outb(0xA1, 0xFF); // disable all slave IRQs
-    placeidx[0] = 0;
-    place[placeidx[0]] = '0';
+    place[0] = '0';
 }
 
 void kbd_handler_C(uint8_t scancode){ //! this sends EOI in the asm
@@ -72,7 +70,5 @@ void kbd_handler_C(uint8_t scancode){ //! this sends EOI in the asm
             case '/': c='?'; break;
         }
     }
-    place[placeidx[0]] = c;
-    placeidx[0]++;
-    place[placeidx[0]] = '\0';
+    place[0] = c;
 }
