@@ -8,3 +8,5 @@ uint8_t inb(uint16_t port);
 void serial_print_hex(uint32_t val);
 void serial_printLN(const char* s);
 void serial_print_hexLN(uint32_t val);
+void outw(uint16_t port, uint16_t val);
+uint16_t inw(uint16_t port);

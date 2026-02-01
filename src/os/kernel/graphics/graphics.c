@@ -2,7 +2,6 @@
 #include "font8x8_basic.h"
 
 #include"../mem_manager/manager.h"
-#include"../serial/serial.h"
 
 VBE *graphicsInfo = (VBE*)0x0900; //? placed here by the bootloader
 
@@ -17,7 +16,6 @@ void memcopy(void* dst, void* src, unsigned int size){
 
 void graphics_init(){
     VBE *newlocation = (VBE*)kalloc(sizeof(VBE));
-    serial_print_hexLN((uint32_t)newlocation);
     memcopy(newlocation, graphicsInfo, sizeof(VBE));
     graphicsInfo = newlocation;
 }

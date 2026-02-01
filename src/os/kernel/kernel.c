@@ -5,6 +5,7 @@
 #include"pic/pic.h"
 #include"idt/idt.h"
 #include"mem_manager/manager.h"
+#include"disk/disk.h"
 
 void init(){
     mem_manager_init(0x800);
@@ -32,11 +33,12 @@ void kernel_main(void){
     }
     vbe_draw_string_scaled(0, 0, "Hello World !", vbe_rgb(graphicsInfo, 255, 0, 0), 2);
 
-    uint16_t base = 0x1F0;  // taskfile base
-    for(int i=0;i<32;i++) {
-        uint8_t status = inb(base + 7);  // 0x1F7 = base + 7
-        //serial_print_hexLN(status);
-    }
+    uint8_t *buff = (uint8_t*)kalloc(512);
+    serial_print_hexLN((uint32_t)buff);
+    ata_read_sector(0, buff);
+    kfree(buff);
+
+    asm volatile("int $0x80");
 
     while (1){
         asm volatile("hlt");

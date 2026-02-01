@@ -12,6 +12,16 @@ uint8_t inb(uint16_t port) {
     return ret;
 }
 
+uint16_t inw(uint16_t port) {
+    uint16_t ret;
+    asm volatile("inw %1, %0" : "=a"(ret) : "Nd"(port));
+    return ret;
+}
+
+void outw(uint16_t port, uint16_t val) {
+    asm volatile("outw %0, %1" : : "a"(val), "Nd"(port));
+}
+
 void serial_init() {
     outb(COM1 + 1, 0x00);    // disable interrupts
     outb(COM1 + 3, 0x80);    // enable DLAB

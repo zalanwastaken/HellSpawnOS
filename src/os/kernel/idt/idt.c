@@ -27,9 +27,7 @@ void def_hander_C(uint32_t int_no){
     serial_print("int no.");
     serial_print_hex(int_no);
     serial_print("\n");
-    while (1){
-        asm volatile("hlt");
-    }
+    EOI(int_no-32);
 }
 
 void CPU_exept_handler_C(){
@@ -51,6 +49,7 @@ extern void def_int_pass(); //* def_handler_C
 extern void CPU_exept(); //* CPU_exept_handler_C
 extern void just_pass(); //* just_pass_C
 extern void kbd_pass(); //* kbd_handler_C
+extern void syscall_pass();
 
 void IDT_init(){
     for(int i = 0; i<32; i++){
@@ -61,6 +60,7 @@ void IDT_init(){
     }
     IDT_set_gate(0x20, (uint32_t)just_pass);
     IDT_set_gate(33, (uint32_t)kbd_pass); // keyboard
+    IDT_set_gate(0x80, (uint32_t)syscall_pass);
 
     IDTp.limit = sizeof(IDT)-1;
     IDTp.base = (uint32_t)&IDT;
