@@ -1,7 +1,26 @@
 #include"graphics.h"
 #include "font8x8_basic.h"
 
+#include"../mem_manager/manager.h"
+#include"../serial/serial.h"
+
 VBE *graphicsInfo = (VBE*)0x0900; //? placed here by the bootloader
+
+void memcopy(void* dst, void* src, unsigned int size){
+    unsigned char* d = (unsigned char*)dst;
+    unsigned char* s = (unsigned char*)src;
+
+    for(unsigned int i = 0; i < size; i++){
+        d[i] = s[i];
+    }
+}
+
+void graphics_init(){
+    VBE *newlocation = (VBE*)kalloc(sizeof(VBE));
+    serial_print_hexLN((uint32_t)newlocation);
+    memcopy(newlocation, graphicsInfo, sizeof(VBE));
+    graphicsInfo = newlocation;
+}
 
 static inline uint32_t scale(uint8_t v, uint8_t bits) {
     return (v * ((1 << bits) - 1)) / 255;

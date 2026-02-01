@@ -10,6 +10,8 @@ typedef struct __attribute__((packed)){
     uint32_t allocatedBlock[];
 }manager_Data;
 
-void mem_manager_init();
-void* kalloc(size_t sizeToAlloc);
-void kfree(void *toFree);
+void mem_manager_init(uint32_t dataddr);
+void *alloc(manager_Data *data, size_t sizeToAlloc);
+void free(manager_Data *data, void *toFree);
+void *kalloc(size_t sizeToAlloc);
+void kfree(void* toFree);

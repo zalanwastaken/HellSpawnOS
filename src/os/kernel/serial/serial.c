@@ -43,3 +43,13 @@ void serial_print_hex(uint32_t val){
         serial_write(c);
     }
 }
+
+void serial_printLN(const char* s){
+    serial_print(s);
+    serial_print("\n");
+}
+
+void serial_print_hexLN(uint32_t val){
+    serial_print_hex(val);
+    serial_print("\n");
+}

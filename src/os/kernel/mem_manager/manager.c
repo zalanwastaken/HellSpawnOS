@@ -1,7 +1,7 @@
 #include"manager.h"
 #include"../serial/serial.h"
 
-manager_Data *data = (manager_Data*)0x800;
+manager_Data *heap;
 
 int ceil(double x) {
     int i = (int)x;
@@ -14,14 +14,15 @@ int ceil(double x) {
         return i;      // negatives already rounded up by cast
 }
 
-void mem_manager_init(){
+void mem_manager_init(uint32_t dataddr){
+    heap = (manager_Data*)dataddr;
     size_t *kernel_size = (size_t*)0x7E0F;
-    data->block_size = 512;
-    data->startfrom = 0x1000+kernel_size[0]+0x200; //? start AFTER the kernel, leave 0x200 for data n stuff
-    data->allocatedBlocks_idx = 0;
+    heap->block_size = 512;
+    heap->startfrom = 0x1000+kernel_size[0]+0x200; //? start AFTER the kernel, leave 0x200 for data n stuff
+    heap->allocatedBlocks_idx = 0;
 }
 
-void* kalloc(size_t sizeToAlloc){
+void* alloc(manager_Data *data, size_t sizeToAlloc){
     size_t need = ceil((double)sizeToAlloc / data->block_size);
     uint32_t startblock = data->startfrom;
     while (1){
@@ -52,7 +53,7 @@ void* kalloc(size_t sizeToAlloc){
     }
 }
 
-void kfree(void *toFree){
+void free(manager_Data *data, void *toFree){
     uint32_t addr = (uint32_t)toFree;
 
     for(uint32_t i = 0; i < data->allocatedBlocks_idx; ){
@@ -67,4 +68,12 @@ void kfree(void *toFree){
             i++; // only advance if not deleting
         }
     }
+}
+
+void *kalloc(size_t sizeToAlloc){
+    return(alloc(heap, sizeToAlloc));
+}
+
+void kfree(void* toFree){
+    free(heap, toFree);
 }

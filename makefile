@@ -34,7 +34,7 @@ build:
 	dd if=build/kernel.bin of=build/os.img bs=1 seek=4096 conv=notrunc
 
 run:
-	qemu-system-x86_64 -drive format=raw,file=build/os.img -m 4G -serial stdio -audiodev alsa,id=snd0 -machine pcspk-audiodev=snd0 -vga qxl 
+	qemu-system-x86_64 -drive format=raw,file=build/os.img -m 4G -serial stdio -audiodev alsa,id=snd0 -machine pcspk-audiodev=snd0 -vga qxl -machine pc 
 
 debug:
 	qemu-system-x86_64 -drive format=raw,file=build/os.img -m 4G -serial stdio -audiodev alsa,id=snd0 -machine pcspk-audiodev=snd0 -vga qxl -s -S

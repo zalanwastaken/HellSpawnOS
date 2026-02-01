@@ -7,9 +7,10 @@
 #include"mem_manager/manager.h"
 
 void init(){
+    mem_manager_init(0x800);
+    graphics_init();
     IDT_init();
     PIC_init();
-    mem_manager_init();
 
     asm volatile("sti");
 }
@@ -17,7 +18,7 @@ void init(){
 __attribute__((section(".start")))
 void kernel_main(void){
     uint32_t *kernel_size = (uint32_t*)0x7E0F;
-    kernel_size[0] *= 512; //? this contains 512B sectos so now we have size in Bytes
+    kernel_size[0] *= 1024; //! dont change or stuff breaks idk why
     serial_print("Kernel size: ");
     serial_print_hex(kernel_size[0]/1024);
     serial_print("KB\n");
@@ -31,15 +32,11 @@ void kernel_main(void){
     }
     vbe_draw_string_scaled(0, 0, "Hello World !", vbe_rgb(graphicsInfo, 255, 0, 0), 2);
 
-    //TEST
-    uint16_t mem = (uint16_t)kalloc(512);
-    serial_print_hex(mem);
-    serial_print("\n");
-    kfree((void*)mem);
-    serial_print_hex((uint32_t)kalloc(512));
-    serial_print("\n");
-    serial_print_hex((uint32_t)kalloc(512));
-    serial_print("\n");
+    uint16_t base = 0x1F0;  // taskfile base
+    for(int i=0;i<32;i++) {
+        uint8_t status = inb(base + 7);  // 0x1F7 = base + 7
+        //serial_print_hexLN(status);
+    }
 
     while (1){
         asm volatile("hlt");
