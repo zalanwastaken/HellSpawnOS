@@ -62,9 +62,22 @@ prot_start:
     mov gs, ax
     mov ss, ax
     mov esp, 0x90000
-    mov ax, SECTORS       ; Load SECTORS into AX
-    mov [0x7E0F], ax      ; Store AX into memory at 0x7E0F
+    mov eax, SECTORS       ; Load SECTORS into AX
+    mov [0x7E0F], eax      ; Store AX into memory at 0x7E0F
+    call enable_sse
     jmp 0x1000            ; jump to kernel
+
+;; --- 32 BIT functions ---
+enable_sse:
+    mov eax, cr0
+    and eax, 0xFFFB      ; cweaw EM (bit 2)
+    or  eax, 0x2         ; set MP (bit 1)
+    mov cr0, eax
+
+    mov eax, cr4
+    or  eax, 0x600       ; set OSFXSR + OSXMMEXCPT
+    mov cr4, eax
+    ret
 
 ;; --- 16 BIT functions ---
 
