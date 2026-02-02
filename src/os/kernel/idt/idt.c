@@ -24,9 +24,7 @@ void EOI(uint8_t irq){
 //* handler funcs
 
 void def_hander_C(uint32_t int_no){
-    serial_print("int no.");
-    serial_print_hex(int_no);
-    serial_print("\n");
+    serial_printLN("Un-implimented int fired");
     EOI(int_no-32);
 }
 

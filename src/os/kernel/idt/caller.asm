@@ -18,9 +18,7 @@ CPU_exept:
 
 def_int_pass:
     pusha
-    push dword 32
     call def_hander_C
-    add esp, 4
     popa
     iret
 

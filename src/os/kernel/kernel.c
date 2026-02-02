@@ -8,7 +8,7 @@
 #include"disk/disk.h"
 
 void init(){
-    mem_manager_init(0x800);
+    mem_manager_init(0x800, 0x10000);
     graphics_init();
     IDT_init();
     PIC_init();
@@ -39,7 +39,7 @@ void kernel_main(void){
     kfree(buff);
 
     asm volatile(
-        "mov $0x10, %%eax\n"
+        "mov $0x69, %%eax\n"
         "int $0x80"
         :
         :

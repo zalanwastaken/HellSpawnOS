@@ -14,11 +14,10 @@ int ceil(double x) {
         return i;      // negatives already rounded up by cast
 }
 
-void mem_manager_init(uint32_t dataddr){
+void mem_manager_init(uint32_t dataddr, uint32_t heapStart){
     heap = (manager_Data*)dataddr;
-    size_t *kernel_size = (size_t*)0x7E0F;
     heap->block_size = 512;
-    heap->startfrom = 0x1000+kernel_size[0]+0x200; //? start AFTER the kernel, leave 0x200 for data n stuff
+    heap->startfrom = heapStart; //? start AFTER the kernel, leave 0x200 for data n stuff
     heap->allocatedBlocks_idx = 0;
 }
 
