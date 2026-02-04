@@ -34,12 +34,13 @@ build/%.o: src/%.asm
 # ---- link kernel ----
 build/kernel.bin: $(OBJS)
 	@$(LD) $(LDFLAGS) -o $@ $(OBJS)
-	@echo "LD $<"
+	@echo "LD $(OBJS)"
 
 # ---- bootloader ----
 build/bootloader.bin: src/os/bootloader.asm build/kernel.bin
 	@mkdir -p build
-	$(AS) -DSECTORS=$(shell stat -c%b build/kernel.bin) -f bin $< -o $@
+	@$(AS) -DSECTORS=$(shell stat -c%b build/kernel.bin) -f bin $< -o $@
+	@echo "AS $<"
 
 # ---- disk image ----
 build/os.img: build/bootloader.bin build/kernel.bin
