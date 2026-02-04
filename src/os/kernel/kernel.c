@@ -38,14 +38,6 @@ void kernel_main(void){
     ata_read_sector(0, buff);
     kfree(buff);
 
-    asm volatile(
-        "mov $0x69, %%eax\n"
-        "int $0x80"
-        :
-        :
-        : "eax"
-    );
-
     while (1){
         asm volatile("hlt");
     }

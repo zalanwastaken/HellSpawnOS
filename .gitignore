@@ -2,3 +2,5 @@ tmp/
 .vscode
 build
 makefile.old
+src/lua
+src/std

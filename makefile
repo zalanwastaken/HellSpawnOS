@@ -6,6 +6,7 @@ AS = nasm
 
 CFLAGS = -m32 -ffreestanding -pedantic -msse2 -c
 LDFLAGS = -T link.ld -m elf_i386 -nostdlib --oformat=binary
+ASFLAGS = -f elf
 
 # ---- sources ----
 SRC_C   := $(shell find src/os/kernel -name "*.c")
@@ -28,7 +29,7 @@ build/%.o: src/%.c
 # ---- compile ASM ----
 build/%.o: src/%.asm
 	@mkdir -p $(dir $@)
-	@$(AS) -f elf $< -o $@
+	@$(AS) $(ASFLAGS) $< -o $@
 	@echo "AS $<"
 
 # ---- link kernel ----
