@@ -1,11 +1,17 @@
 #include<stdint.h>
 
-#include"serial/serial.h"
 #include"graphics/graphics.h"
+
 #include"pic/pic.h"
 #include"idt/idt.h"
+
 #include"mem_manager/manager.h"
+
 #include"disk/disk.h"
+#include"disk/fs.h"
+
+#include"serial/logger.h"
+#include"serial/serial.h"
 
 void init(){
     mem_manager_init(0x800, 0x10000);
@@ -14,17 +20,24 @@ void init(){
     PIC_init();
 
     asm volatile("sti");
+
+    LOG_info("Hello World !");
 }
 
 __attribute__((section(".start")))
 void kernel_main(void){
-    uint32_t *kernel_size = (uint32_t*)0x7E0F;
-    kernel_size[0] *= 1024; //! dont change or stuff breaks idk why
+    init();
+
+    uint32_t* kernel_size = kalloc(sizeof(uint32_t)*1);
+    uint32_t *kernel_size_fromboot = (uint32_t*)0x7E0F;
+
+    kernel_size_fromboot[0] *= 1024; //! dont change or stuff breaks idk why
+    kernel_size[0] = kernel_size_fromboot[0];
+    kernel_size_fromboot[0] = 0x00; //? we dont care about this now 
+
     serial_print("Kernel size: ");
     serial_print_hex(kernel_size[0]/1024);
     serial_print("KB\n");
-
-    init();
 
     for (int i = 0; i<220; i++){
         for(int f = 0; f<100; f++){
