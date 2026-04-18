@@ -1,5 +1,6 @@
 #include"idt.h"
-#include"../serial/serial.h"
+#include"../serial/logger.h"
+#include"../serial/serial.h" // for outb
 #include"kbd/kbd.h"
 
 IDT_entry IDT[256];
@@ -24,12 +25,12 @@ void EOI(uint8_t irq){
 //* handler funcs
 
 void def_hander_C(uint32_t int_no){
-    serial_printLN("Un-implimented int fired");
+    LOG_warnLN("Un-implimented int fired");
     EOI(int_no-32);
 }
 
 void CPU_exept_handler_C(){
-    serial_print("CPU went boom :(\n");
+    LOG_errorLN("CPU went boom :(\n");
     while (1){
         asm volatile("hlt");
     }

@@ -1,5 +1,7 @@
 #include"manager.h"
-#include"../serial/serial.h"
+//#include"../serial/serial.h"
+
+#include"../serial/logger.h"
 
 manager_Data *heap;
 
@@ -70,6 +72,10 @@ void free(manager_Data *data, void *toFree){
 }
 
 void *kalloc(size_t sizeToAlloc){
+    char buff[256];
+    LOG_format(buff, sizeof(buff), "allocated %dB to heap", sizeToAlloc);
+    LOG_infoLN(buff);
+
     return(alloc(heap, sizeToAlloc));
 }
 

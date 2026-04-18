@@ -21,7 +21,11 @@ void init(){
 
     asm volatile("sti");
 
-    LOG_info("Hello World !");
+    LOG_infoLN("Hello World !");
+}
+
+void run(){
+    asm volatile("hlt");
 }
 
 __attribute__((section(".start")))
@@ -35,10 +39,6 @@ void kernel_main(void){
     kernel_size[0] = kernel_size_fromboot[0];
     kernel_size_fromboot[0] = 0x00; //? we dont care about this now 
 
-    serial_print("Kernel size: ");
-    serial_print_hex(kernel_size[0]/1024);
-    serial_print("KB\n");
-
     for (int i = 0; i<220; i++){
         for(int f = 0; f<100; f++){
             vbe_putpixel(graphicsInfo, i, f, vbe_rgb(graphicsInfo, 255, 255, 255));
@@ -47,11 +47,11 @@ void kernel_main(void){
     vbe_draw_string_scaled(0, 0, "Hello World !", vbe_rgb(graphicsInfo, 255, 0, 0), 2);
 
     uint8_t *buff = (uint8_t*)kalloc(512);
-    serial_print_hexLN((uint32_t)buff);
+    //serial_print_hexLN((uint32_t)buff);
     ata_read_sector(0, buff);
     kfree(buff);
 
     while (1){
-        asm volatile("hlt");
+        run();
     }
 }
