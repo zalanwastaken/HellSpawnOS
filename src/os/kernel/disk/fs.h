@@ -11,7 +11,7 @@ struct DIR{
 
 struct FILE{
     char name[255];
-    size_t content_size;
+    //size_t content_size;
     void *content[];
 } typedef FILE_T;
 
