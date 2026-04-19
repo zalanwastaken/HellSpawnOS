@@ -19,7 +19,7 @@ int ceil(double x) {
 void mem_manager_init(uint32_t dataddr, uint32_t heapStart){
     heap = (manager_Data*)dataddr;
     heap->block_size = 512;
-    heap->startfrom = heapStart; //? start AFTER the kernel, leave 0x200 for data n stuff
+    heap->startfrom = heapStart;
     heap->allocatedBlocks_idx = 0;
 }
 
@@ -81,4 +81,8 @@ void *kalloc(size_t sizeToAlloc){
 
 void kfree(void* toFree){
     free(heap, toFree);
+}
+
+manager_Data *getHeapData(){
+    return heap;
 }

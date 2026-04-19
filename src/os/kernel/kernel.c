@@ -13,8 +13,11 @@
 #include"serial/logger.h"
 #include"serial/serial.h"
 
+#include"idt/kbd/kbd.h"
+
 void init(){
     mem_manager_init(0x800, 0x10000);
+    LOG_init();
     graphics_init();
     IDT_init();
     PIC_init();
@@ -24,8 +27,22 @@ void init(){
     LOG_infoLN("Hello World !");
 }
 
+bool release = true;
+
 void run(){
-    asm volatile("hlt");
+    char *keyPressed = kbd_getpressed();
+    if(keyPressed[0] == 'd' && release){
+        LOG_infoLN("hallo !");
+        manager_Data *heapData = getHeapData(); //! LIVE POINTER DO NOT MODIFY!
+        uint16_t heapsize = (heapData->allocatedBlocks_idx*heapData->block_size);
+        char *toprint = (char*)kalloc(sizeof(char)*256);
+        LOG_format(toprint, sizeof(char)*256, "Heap size is %dB", heapsize);
+        LOG_infoLN(toprint);
+        kfree(toprint);
+        release = false;
+    }else if(keyPressed[0] != 'd'){
+        release = true;
+    }
 }
 
 __attribute__((section(".start")))

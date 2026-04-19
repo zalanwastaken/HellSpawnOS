@@ -76,3 +76,7 @@ void kbd_handler_C(uint8_t scancode){ //! this sends EOI in the asm
     }
     place[0] = c;
 }
+
+char* kbd_getpressed(){
+    return place;
+}

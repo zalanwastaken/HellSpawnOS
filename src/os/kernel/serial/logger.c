@@ -1,7 +1,10 @@
 #include"logger.h"
 #include"serial.h"
+#include"../mem_manager/manager.h"
 
-#include <stdarg.h>
+#include<stdarg.h>
+
+//* ---UTILS---
 
 // append char with bounds check
 void append_char(char *buf, int *pos, int max, char c) {
@@ -40,6 +43,15 @@ void append_int(char *buf, int *pos, int max, int num) {
     while (i--) {
         append_char(buf, pos, max, tmp[i]);
     }
+}
+
+//* ---FUNCS---
+
+size_t logged_size = 256; //? we allocate 256 but indexable are 255(starting from 0)
+uint32_t loggedIDX = 0;
+char *logged = (char*)-1;
+void LOG_init(){
+    logged = kalloc(sizeof(char)*256);
 }
 
 // main formatter
@@ -87,6 +99,33 @@ void LOGLN(const char *clr, const char *suffix, const char *s){
     serial_print(suffix);
     serial_print(s);
     serial_printLN(LOG_TERMINATE);
+
+    if(logged == (char*)-1){
+        serial_printLN("Waiting for log init not adding last message");
+    }else{
+        for(uint32_t i = 0; i<logged_size; i++){
+            if(loggedIDX >= logged_size){
+                char *newlogged = alloc(getHeapData(), logged_size+256);
+                logged_size += 256;
+                for(uint32_t f = 0; f<loggedIDX; f++){
+                    newlogged[f] = logged[f];
+                }
+                kfree(logged);
+                logged = newlogged;
+                serial_print("New memory allocated: ");
+                serial_print_hexLN(logged_size);
+            }
+            logged[loggedIDX] = s[i];
+            loggedIDX++;
+            if(s[i] == '\0'){
+                break;
+            }
+        }
+    }
+}
+
+char* LOG_get_logged(){
+    return logged;
 }
 
 void LOG_HexLN(const char *clr, const char *suffix, uint32_t s){

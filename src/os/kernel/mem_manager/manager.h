@@ -15,3 +15,4 @@ void *alloc(manager_Data *data, size_t sizeToAlloc);
 void free(manager_Data *data, void *toFree);
 void *kalloc(size_t sizeToAlloc);
 void kfree(void* toFree);
+manager_Data *getHeapData();
