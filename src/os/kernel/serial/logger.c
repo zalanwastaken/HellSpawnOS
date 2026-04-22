@@ -51,7 +51,7 @@ size_t logged_size = 256; //? we allocate 256 but indexable are 255(starting fro
 uint32_t loggedIDX = 0;
 char *logged = (char*)-1;
 void LOG_init(){
-    logged = kalloc(sizeof(char)*256);
+    logged = (char*)kalloc(sizeof(char)*256);
 }
 
 // main formatter
@@ -94,12 +94,7 @@ int LOG_format(char *buf, int max, const char *fmt, ...) {
     return pos;
 }
 
-void LOGLN(const char *clr, const char *suffix, const char *s){
-    serial_print(clr);
-    serial_print(suffix);
-    serial_print(s);
-    serial_printLN(LOG_TERMINATE);
-
+void add_to_logged(const char *s){
     if(logged == (char*)-1){
         serial_printLN("Waiting for log init not adding last message");
     }else{
@@ -124,7 +119,17 @@ void LOGLN(const char *clr, const char *suffix, const char *s){
     }
 }
 
-char* LOG_get_logged(){
+void LOGLN(const char *clr, const char *suffix, const char *s){
+    serial_print(clr);
+    serial_print(suffix);
+    serial_print(s);
+    serial_printLN(LOG_TERMINATE);
+
+    add_to_logged(s);
+}
+
+char* LOG_get_logged(uint32_t *idx){
+    idx[0] = loggedIDX;
     return logged;
 }
 
@@ -133,6 +138,19 @@ void LOG_HexLN(const char *clr, const char *suffix, uint32_t s){
     serial_print(suffix);
     serial_print_hex(s);
     serial_printLN(LOG_TERMINATE);
+
+    char hex[] = "0123456789ABCDEF";
+
+    char tmp[256];
+
+    uint32_t idx = 0;
+    for(int i = 28; i >= 0; i -= 4){
+        char c = hex[(s >> i) & 0xF];
+        tmp[idx] = c;
+        idx++;
+    }
+
+    add_to_logged(tmp);
 }
 
 void LOG_infoLN(const char *s){

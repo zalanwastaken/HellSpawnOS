@@ -10,7 +10,7 @@
 void LOG_init();
 int LOG_format(char *buf, int max, const char *fmt, ...);
 void LOGLN(const char *clr, const char *suffix, const char *s);
-char* LOG_get_logged();
+char* LOG_get_logged(uint32_t *idx);
 void LOG_HexLN(const char *clr, const char *suffix, uint32_t s);
 void LOG_infoLN(const char *s);
 void LOG_errorLN(const char *s);

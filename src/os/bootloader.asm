@@ -135,7 +135,7 @@ vga_err:
     int 0x10
     jmp $
 
-;; --- Magic number ---
+;  --- Magic number ---
 
 times 510-($-$$) db 0
 dw 0xAA55

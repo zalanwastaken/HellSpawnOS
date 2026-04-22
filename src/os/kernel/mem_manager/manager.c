@@ -86,3 +86,13 @@ void kfree(void* toFree){
 manager_Data *getHeapData(){
     return heap;
 }
+
+void memcopy(void* dst, void* src, uint32_t size){
+    unsigned char* d = (unsigned char*)dst;
+    unsigned char* s = (unsigned char*)src;
+
+    for(unsigned int i = 0; i < size; i++){
+        d[i] = s[i];
+    }
+}
+
