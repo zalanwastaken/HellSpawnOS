@@ -16,9 +16,9 @@
 #include"idt/kbd/kbd.h"
 
 void init(){
-    mem_manager_init(0x800, 0x10000);
-    LOG_init();
+    mem_manager_init(0x100, 0x10000);
     graphics_init();
+    LOG_init();
     IDT_init();
     PIC_init();
 
