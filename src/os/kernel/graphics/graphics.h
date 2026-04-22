@@ -12,7 +12,7 @@ struct vbe_mode_info_structure {
 	uint32_t win_func_ptr;		// deprecated; used to switch banks from protected mode without returning to real mode
 	uint16_t pitch;			// number of bytes per horizontal line
 	uint16_t width;			// width in pixels
-	uint16_t height;			// height in pixels
+	uint16_t height;	    // height in pixels
 	uint8_t w_char;			// unused...
 	uint8_t y_char;			// ...
 	uint8_t planes;
@@ -33,7 +33,7 @@ struct vbe_mode_info_structure {
 	uint8_t reserved_position;
 	uint8_t direct_color_attributes;
 
-	uint32_t framebuffer;		// physical address of the linear frame buffer; write here to draw to the screen
+	uint32_t framebuffer;		    // physical address of the linear frame buffer; write here to draw to the screen
 	uint32_t off_screen_mem_off;
 	uint16_t off_screen_mem_size;	// size of memory in the framebuffer but not being displayed on the screen
 	uint8_t reserved1[206];
@@ -42,7 +42,9 @@ struct vbe_mode_info_structure {
 extern VBE *graphicsInfo; //! in graphics.c
 
 uint32_t vbe_rgb(VBE* m, uint8_t r, uint8_t g, uint8_t b);
-void vbe_putpixel(VBE* m, int x, int y, uint32_t color);
-void vbe_draw_string(int x, int y, const char* str, uint32_t color);
-void vbe_draw_string_scaled(int x, int y, const char* str, uint32_t color, int scale);
+void vbe_putpixel(VBE* m, uint32_t x, uint32_t y, uint32_t color);
+void vbe_draw_string(uint32_t x, uint32_t y, const char* str, uint32_t color);
+void vbe_draw_string_scaled(uint32_t x, uint32_t y, const char* str, uint32_t color, uint8_t scale);
 void graphics_init();
+void vbe_rectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color);
+void memcopy(void* dst, void* src, unsigned int size);

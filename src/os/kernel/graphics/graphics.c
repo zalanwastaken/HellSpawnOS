@@ -5,15 +5,6 @@
 
 VBE *graphicsInfo = (VBE*)0x0900; //? placed here by the bootloader
 
-void memcopy(void* dst, void* src, unsigned int size){
-    unsigned char* d = (unsigned char*)dst;
-    unsigned char* s = (unsigned char*)src;
-
-    for(unsigned int i = 0; i < size; i++){
-        d[i] = s[i];
-    }
-}
-
 void graphics_init(){
     VBE *newlocation = (VBE*)kalloc(sizeof(VBE));
     memcopy(newlocation, graphicsInfo, sizeof(VBE));
@@ -31,7 +22,7 @@ uint32_t vbe_rgb(VBE* m, uint8_t r, uint8_t g, uint8_t b) {
     return R | G | B;
 }
 
-void vbe_putpixel(VBE* m, int x, int y, uint32_t color) {
+void vbe_putpixel(VBE* m, uint32_t x, uint32_t y, uint32_t color) {
     uint8_t* fb = (uint8_t*)(uintptr_t)m->framebuffer;
     uint32_t bytes = m->bpp / 8;
     uint32_t off = y * m->pitch + x * bytes;
@@ -42,7 +33,7 @@ void vbe_putpixel(VBE* m, int x, int y, uint32_t color) {
 }
 
 // simple wrapper to draw a single char at (x, y)
-void vbe_draw_char(int x, int y, char c, uint32_t color) {
+void vbe_draw_char(uint32_t x, uint32_t y, char c, uint32_t color) {
     for(int row = 0; row < 8; row++) {
         uint8_t bits = font8x8_basic[(uint8_t)c][row];
         for(int col = 0; col < 8; col++) {
@@ -53,7 +44,7 @@ void vbe_draw_char(int x, int y, char c, uint32_t color) {
     }
 }
 
-void vbe_draw_string(int x, int y, const char* str, uint32_t color) {
+void vbe_draw_string(uint32_t x, uint32_t y, const char* str, uint32_t color) {
     int cursor_x = x;
     while(*str) {
         vbe_draw_char(cursor_x, y, *str, color);
@@ -63,7 +54,7 @@ void vbe_draw_string(int x, int y, const char* str, uint32_t color) {
 }
 
 // draw a single scaled char at (x, y)
-void vbe_draw_char_scaled(int x, int y, char c, uint32_t color, int scale) {
+void vbe_draw_char_scaled(uint32_t x, uint32_t y, char c, uint32_t color, uint8_t scale) {
     for(int row = 0; row < 8; row++) {
         uint8_t bits = font8x8_basic[(uint8_t)c][row];
         for(int col = 0; col < 8; col++) {
@@ -80,11 +71,19 @@ void vbe_draw_char_scaled(int x, int y, char c, uint32_t color, int scale) {
 }
 
 // draw a string horizontally with scaling
-void vbe_draw_string_scaled(int x, int y, const char* str, uint32_t color, int scale) {
+void vbe_draw_string_scaled(uint32_t x, uint32_t y, const char* str, uint32_t color, uint8_t scale) {
     int cursor_x = x;
     while(*str) {
         vbe_draw_char_scaled(cursor_x, y, *str, color, scale);
         cursor_x += 8 * scale; // move to next char
         str++;
+    }
+}
+
+void vbe_rectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color){
+    for(uint32_t i = 0; i<=w; i++){
+        for(uint32_t f = 0; f<=h; f++){
+            vbe_putpixel(graphicsInfo, x+i, y+f, color);
+        }
     }
 }
