@@ -1,4 +1,4 @@
-# 🔥 HellFireOS 🔥
+# 🔥 HellSpawnOS 🔥
 > a handcrafted OS because **why not** 😈
 
 HellFireOS is a from-scratch hobby operating system written in **C + x86 ASM**.
