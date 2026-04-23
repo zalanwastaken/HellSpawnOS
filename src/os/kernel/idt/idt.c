@@ -2,6 +2,7 @@
 #include"../serial/logger.h"
 #include"../serial/serial.h" // for outb
 #include"kbd/kbd.h"
+#include"pit/pit.h"
 
 IDT_entry IDT[256];
 IDT_ptr IDTp;
@@ -30,7 +31,7 @@ void def_hander_C(uint32_t int_no){
 }
 
 void CPU_exept_handler_C(){
-    LOG_errorLN("CPU went boom :(\n");
+    LOG_errorLN("CPU went boom :(");
     while (1){
         asm volatile("hlt");
     }
@@ -49,6 +50,7 @@ extern void CPU_exept(); //* CPU_exept_handler_C
 extern void just_pass(); //* just_pass_C
 extern void kbd_pass(); //* kbd_handler_C
 extern void syscall_pass();
+extern void pit_pass();
 
 void IDT_init(){
     for(int i = 0; i<32; i++){
@@ -57,7 +59,7 @@ void IDT_init(){
     for(int i = 32; i<256; i++){
         IDT_set_gate(i, (uint32_t)def_int_pass);
     }
-    IDT_set_gate(0x20, (uint32_t)just_pass);
+    IDT_set_gate(32, (uint32_t)pit_pass);
     IDT_set_gate(33, (uint32_t)kbd_pass); // keyboard
     IDT_set_gate(0x80, (uint32_t)syscall_pass);
 
@@ -65,6 +67,7 @@ void IDT_init(){
     IDTp.base = (uint32_t)&IDT;
 
     init_kbd();
+    pit_init();
 
     asm volatile ("lidt %0" : : "m"(IDTp));
 }

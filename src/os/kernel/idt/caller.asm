@@ -10,6 +10,9 @@ extern just_pass_C
 global kbd_pass
 extern kbd_handler_C
 
+global pit_pass
+extern pit_handler_c
+
 CPU_exept:
     pusha
     call CPU_exept_handler_C
@@ -41,5 +44,22 @@ kbd_pass:
     mov al, 0x20
     out 0x20, al      ; EOI to master PIC
 
+    popa
+    iret
+
+pit_pass:
+    pusha                   ; save all registers
+
+    mov eax, esp            ; eax = pointer to pusha frame
+
+    push ds
+    push 0x10
+    pop ds
+
+    push eax                ; argument for C
+    call pit_handler_c
+    add esp, 4
+
+    pop ds
     popa
     iret
