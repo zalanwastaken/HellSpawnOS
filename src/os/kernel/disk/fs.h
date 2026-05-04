@@ -18,3 +18,5 @@ typedef struct __attribute__((packed)){
     uint8_t children_amt;
     uint32_t childrenoffsets[256];
 }dir_t;
+
+void FS_init();
