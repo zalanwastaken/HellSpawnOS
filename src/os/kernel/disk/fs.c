@@ -1,4 +1,7 @@
 #include"fs.h"
 #include"../mem_manager/manager.h"
+#include"../disk/disk.h"
 
-void fs_init(){}
+void FS_init(){
+
+}

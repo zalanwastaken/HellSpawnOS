@@ -1,4 +1,5 @@
 #include<stdint.h>
+#include<stddef.h>
 
 #include"graphics/graphics.h"
 
@@ -21,6 +22,7 @@ void init(){
     LOG_init();
     IDT_init();
     PIC_init();
+    FS_init();
 
     asm volatile("sti"); //? enable ints
 }
@@ -33,7 +35,7 @@ void run(){
         manager_Data *heapData = getHeapData(); //! LIVE POINTER DO NOT MODIFY!
         manager_Data *copiedData = (manager_Data*)kalloc(sizeof(manager_Data)+(sizeof(uint32_t)*heapData->allocatedBlocks_idx));
         memcopy(copiedData, heapData, sizeof(manager_Data)+(sizeof(uint32_t)*heapData->allocatedBlocks_idx));
-        heapData = NULL; //! Try to modify it now >:)
+        heapData = NULL; //* Try to modify it now >:)
         uint16_t heapsize = (copiedData->allocatedBlocks_idx*copiedData->block_size);
         kfree(copiedData);
 
@@ -84,14 +86,14 @@ void kernel_main(void){
 
     kernel_size_fromboot[0] *= 1024; //! dont change or stuff breaks idk why
     kernel_size[0] = kernel_size_fromboot[0];
-    kernel_size_fromboot[0] = 0x00; //? we dont care about this now 
+    kernel_size_fromboot[0] = 0x00; //? we dont care about this now
 
     vbe_rectangle(0, 0, 300, 200, vbe_rgb(graphicsInfo, 255, 255, 255));
     vbe_draw_string_scaled(0, 0, "Hello World !", vbe_rgb(graphicsInfo, 255, 0, 0), 2);
 
     uint8_t *buff = (uint8_t*)kalloc(512); //! 8 bits to hold that ptr, not good !
     //serial_print_hexLN((uint32_t)buff);
-    ata_read_sector(0, buff);
+    ata_read_sector_safe(0, buff);
     kfree(buff);
 
     LOG_infoLN("Welcome to HellSpawn OS!");

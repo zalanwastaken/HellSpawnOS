@@ -3,18 +3,18 @@
 #include<stdint.h>
 #include<stddef.h>
 
-struct DIR{
-    char name[255];
+typedef struct __attribute__((packed)){
+    bool alwaysTRUE; //NOTE this is magic bool, this should always be true in a file
+    char name[128];
+    size_t datalen;
+    uint32_t *data;
+    uint32_t dataoffset;
+}file_t;
+
+typedef struct __attribute__((packed)){
+    bool alwaysFALSE; //NOTE this is magic bool, this should always be false in a dir
+    char name[128];
     bool isroot;
-    uint64_t children_amt;
-    uint32_t *children[];
-} typedef DIR_T;
-
-struct FILE{
-    char name[255];
-    size_t content_size;
-    void *content[];
-} typedef FILE_T;
-
-
-void fs_init();
+    uint8_t children_amt;
+    uint32_t childrenoffsets[256];
+}dir_t;

@@ -26,8 +26,6 @@ static void ata_wait_busy(void) {
 }
 
 void ata_read_sector(uint32_t lba, uint8_t* buffer) {
-    asm volatile("cli");
-
     outb(ATA_PRIMARY_DRIVE, 0xE0 | ((lba >> 24) & 0x0F));
     outb(ATA_PRIMARY_SECCOUNT, 1); // read 1 sector
     outb(ATA_PRIMARY_LBA_LOW,  lba & 0xFF);
@@ -42,13 +40,9 @@ void ata_read_sector(uint32_t lba, uint8_t* buffer) {
         buffer[i*2] = data & 0xFF;
         buffer[i*2+1] = (data >> 8) & 0xFF;
     }
-
-    asm volatile("sti");
 }
 
 void ata_write_sector(uint32_t lba, uint8_t* buffer) {
-    asm volatile("cli");
-
     outb(ATA_PRIMARY_DRIVE, 0xE0 | ((lba >> 24) & 0x0F));
     outb(ATA_PRIMARY_SECCOUNT, 1); // write 1 sector
     outb(ATA_PRIMARY_LBA_LOW,  lba & 0xFF);
@@ -64,8 +58,22 @@ void ata_write_sector(uint32_t lba, uint8_t* buffer) {
     }
 
     // send cache flush
-    outb(ATA_PRIMARY_COMMAND, 0xE7); 
+    outb(ATA_PRIMARY_COMMAND, 0xE7);
     ata_wait_busy();
+}
+
+void ata_read_sector_safe(uint32_t lba, uint8_t *buffer){
+    asm volatile("cli");
+
+    ata_read_sector(lba, buffer);
+
+    asm volatile("sti");
+}
+
+void ata_write_sector_safe(uint32_t lba, uint8_t *buffer){
+    asm volatile("cli");
+
+    ata_read_sector(lba, buffer);
 
     asm volatile("sti");
 }
