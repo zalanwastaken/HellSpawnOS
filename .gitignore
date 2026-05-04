@@ -2,4 +2,7 @@ tmp/
 .vscode
 build
 makefile.old
-tools
+
+src/tools/fsEncoder/fs/*
+src/tools/fsEncoder/built
+src/tools/fsEncoder/output.bin
