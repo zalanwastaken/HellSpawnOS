@@ -18,3 +18,9 @@ typedef struct __attribute__((packed)){
     uint8_t children_amt;
     uint32_t childrenoffsets[256];
 }dir_t;
+
+typedef struct __attribute__((packed)){
+    uint8_t always111; //NOTE this is magic int, this should always be 111 in this
+    uint32_t dirblocksize;
+    uint32_t fileblocksize;
+}aligner_t;
