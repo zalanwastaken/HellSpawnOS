@@ -13,8 +13,8 @@ $(BUILD):
 	mkdir -p $(BUILD)
 	mkdir -p fs
 	mkdir -p fs/dir
-	touch fs/file
-	touch fs/dir/insidefile
+	echo "something else meow" > fs/file
+	echo "something" > fs/dir/insidefile
 
 clean: $(BUILD)
 	rm -rf $(BUILD)
