@@ -2,6 +2,7 @@
 
 #include<stdint.h>
 #include<stddef.h>
+#include<stdbool.h>
 
 typedef struct __attribute__((packed)){
     bool alwaysTRUE; //NOTE this is magic bool, this should always be true in a file
